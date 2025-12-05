@@ -47,66 +47,79 @@ class Event {
     List<String>? attachments,
     List<String>? guests,
     this.notes,
-  })  : id = id ?? DateTime.now().millisecondsSinceEpoch.toString(),
-        startTime = startTime ?? date ?? DateTime.now(),
-        endTime = endTime ??
-            (startTime ?? date ?? DateTime.now()).add(
-              const Duration(hours: 1),
-            ),
-        date = DateTime(
-          (startTime ?? date ?? DateTime.now()).year,
-          (startTime ?? date ?? DateTime.now()).month,
-          (startTime ?? date ?? DateTime.now()).day,
-        ),
-        timezone = timezone ?? DateTime.now().timeZoneName,
-        reminders = reminders?.toList() ?? const [30],
-        skippedOccurrences = skippedOccurrences?.toList() ?? const [],
-        attachments = attachments?.toList() ?? const [],
-        guests = guests?.toList() ?? const [];
+  }) : id = id ?? DateTime.now().millisecondsSinceEpoch.toString(),
+       startTime = startTime ?? date ?? DateTime.now(),
+       endTime =
+           endTime ??
+           (startTime ?? date ?? DateTime.now()).add(const Duration(hours: 1)),
+       date = DateTime(
+         (startTime ?? date ?? DateTime.now()).year,
+         (startTime ?? date ?? DateTime.now()).month,
+         (startTime ?? date ?? DateTime.now()).day,
+       ),
+       timezone = timezone ?? DateTime.now().timeZoneName,
+       reminders = reminders?.toList() ?? const [30],
+       skippedOccurrences = skippedOccurrences?.toList() ?? const [],
+       attachments = attachments?.toList() ?? const [],
+       guests = guests?.toList() ?? const [];
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'title': title,
-        'date': date.toIso8601String(),
-        'startTime': startTime.toIso8601String(),
-        'endTime': endTime.toIso8601String(),
-        'description': description,
-        'category': category,
-        'priority': priority,
-        'timezone': timezone,
-        'reminders': reminders,
-        'recurrence': recurrence,
-        'recurrenceEnd': recurrenceEnd?.toIso8601String(),
-        'customRecurrenceRule': customRecurrenceRule,
-        'skippedOccurrences': skippedOccurrences,
-        'locationName': locationName,
-        'mapUrl': mapUrl,
-        'attachments': attachments,
-        'guests': guests,
-        'notes': notes,
-      };
+    'id': id,
+    'title': title,
+    'date': date.toIso8601String(),
+    'startTime': startTime.toIso8601String(),
+    'endTime': endTime.toIso8601String(),
+    'description': description,
+    'category': category,
+    'priority': priority,
+    'timezone': timezone,
+    'reminders': reminders,
+    'recurrence': recurrence,
+    'recurrenceEnd': recurrenceEnd?.toIso8601String(),
+    'customRecurrenceRule': customRecurrenceRule,
+    'skippedOccurrences': skippedOccurrences,
+    'locationName': locationName,
+    'mapUrl': mapUrl,
+    'attachments': attachments,
+    'guests': guests,
+    'notes': notes,
+  };
 
   factory Event.fromJson(Map<String, dynamic> json) => Event(
-        id: json['id'] as String? ?? '${json['title']}-${json['date']}',
-        title: json['title'] as String,
-        date: DateTime.parse(json['date'] as String),
-        startTime: json['startTime'] != null ? DateTime.parse(json['startTime'] as String) : null,
-        endTime: json['endTime'] != null ? DateTime.parse(json['endTime'] as String) : null,
-        description: json['description'] as String,
-        category: json['category'] as String? ?? 'personal',
-        priority: json['priority'] as String? ?? 'normal',
-        timezone: json['timezone'] as String?,
-        reminders: (json['reminders'] as List<dynamic>?)?.map((e) => e as int).toList(),
-        recurrence: json['recurrence'] as String? ?? 'none',
-        recurrenceEnd: json['recurrenceEnd'] != null ? DateTime.parse(json['recurrenceEnd'] as String) : null,
-        customRecurrenceRule: json['customRecurrenceRule'] as String?,
-        skippedOccurrences: (json['skippedOccurrences'] as List<dynamic>?)?.map((e) => e.toString()).toList(),
-        locationName: json['locationName'] as String?,
-        mapUrl: json['mapUrl'] as String?,
-        attachments: (json['attachments'] as List<dynamic>?)?.map((e) => e.toString()).toList(),
-        guests: (json['guests'] as List<dynamic>?)?.map((e) => e.toString()).toList(),
-        notes: json['notes'] as String?,
-      );
+    id: json['id'] as String? ?? '${json['title']}-${json['date']}',
+    title: json['title'] as String,
+    date: DateTime.parse(json['date'] as String),
+    startTime: json['startTime'] != null
+        ? DateTime.parse(json['startTime'] as String)
+        : null,
+    endTime: json['endTime'] != null
+        ? DateTime.parse(json['endTime'] as String)
+        : null,
+    description: json['description'] as String,
+    category: json['category'] as String? ?? 'personal',
+    priority: json['priority'] as String? ?? 'normal',
+    timezone: json['timezone'] as String?,
+    reminders: (json['reminders'] as List<dynamic>?)
+        ?.map((e) => e as int)
+        .toList(),
+    recurrence: json['recurrence'] as String? ?? 'none',
+    recurrenceEnd: json['recurrenceEnd'] != null
+        ? DateTime.parse(json['recurrenceEnd'] as String)
+        : null,
+    customRecurrenceRule: json['customRecurrenceRule'] as String?,
+    skippedOccurrences: (json['skippedOccurrences'] as List<dynamic>?)
+        ?.map((e) => e.toString())
+        .toList(),
+    locationName: json['locationName'] as String?,
+    mapUrl: json['mapUrl'] as String?,
+    attachments: (json['attachments'] as List<dynamic>?)
+        ?.map((e) => e.toString())
+        .toList(),
+    guests: (json['guests'] as List<dynamic>?)
+        ?.map((e) => e.toString())
+        .toList(),
+    notes: json['notes'] as String?,
+  );
 
   Event copyWith({
     String? id,
@@ -234,20 +247,26 @@ class EventController extends GetxController {
         break;
       case EventFilter.thisMonth:
         final current = focusedMonth.value;
-        list = list.where((e) => e.startTime.year == current.year && e.startTime.month == current.month);
+        list = list.where(
+          (e) =>
+              e.startTime.year == current.year &&
+              e.startTime.month == current.month,
+        );
         break;
       case EventFilter.all:
         break;
     }
 
-    if (searchQuery.isNotEmpty) {
+    if (searchQuery.value.isNotEmpty) {
       final q = searchQuery.value.toLowerCase();
-      list = list.where((e) =>
-          e.title.toLowerCase().contains(q) ||
-          e.description.toLowerCase().contains(q) ||
-          (e.notes ?? '').toLowerCase().contains(q) ||
-          e.locationName?.toLowerCase().contains(q) == true ||
-          e.guests.any((g) => g.toLowerCase().contains(q)));
+      list = list.where(
+        (e) =>
+            e.title.toLowerCase().contains(q) ||
+            e.description.toLowerCase().contains(q) ||
+            (e.notes ?? '').toLowerCase().contains(q) ||
+            e.locationName?.toLowerCase().contains(q) == true ||
+            e.guests.any((g) => g.toLowerCase().contains(q)),
+      );
     }
 
     if (selectedCategories.isNotEmpty) {
@@ -260,7 +279,10 @@ class EventController extends GetxController {
         result.sort((a, b) => b.startTime.compareTo(a.startTime));
         break;
       case 'priority':
-        result.sort((a, b) => _priorityScore(b.priority).compareTo(_priorityScore(a.priority)));
+        result.sort(
+          (a, b) =>
+              _priorityScore(b.priority).compareTo(_priorityScore(a.priority)),
+        );
         break;
       default:
         result.sort((a, b) => a.startTime.compareTo(b.startTime));
@@ -309,7 +331,9 @@ class EventController extends GetxController {
     if (idx == -1) return;
     final event = events[idx];
     final snoozedTime = DateTime.now().add(duration);
-    reminderLog.add('[${DateTime.now().toIso8601String()}] Snooze "${event.title}" đến ${snoozedTime.toIso8601String()}');
+    reminderLog.add(
+      '[${DateTime.now().toIso8601String()}] Snooze "${event.title}" đến ${snoozedTime.toIso8601String()}',
+    );
   }
 
   List<Event> eventsForDate(DateTime date) {
@@ -390,8 +414,11 @@ class EventController extends GetxController {
 
   int get eventsThisWeek {
     final now = DateTime.now();
-    final start =
-        DateTime(now.year, now.month, now.day).subtract(Duration(days: now.weekday - 1));
+    final start = DateTime(
+      now.year,
+      now.month,
+      now.day,
+    ).subtract(Duration(days: now.weekday - 1));
     final end = start.add(const Duration(days: 7));
     return events
         .where((e) => e.startTime.isAfter(start) && e.startTime.isBefore(end))
@@ -401,7 +428,9 @@ class EventController extends GetxController {
   int get eventsThisMonth {
     final now = DateTime.now();
     return events
-        .where((e) => e.startTime.year == now.year && e.startTime.month == now.month)
+        .where(
+          (e) => e.startTime.year == now.year && e.startTime.month == now.month,
+        )
         .length;
   }
 
@@ -445,7 +474,11 @@ class EventController extends GetxController {
     for (final rawLine in lines) {
       final line = rawLine.trim();
       if (line == 'BEGIN:VEVENT') {
-        current = Event(title: 'Chưa đặt tên', description: '', date: DateTime.now());
+        current = Event(
+          title: 'Chưa đặt tên',
+          description: '',
+          date: DateTime.now(),
+        );
       } else if (line == 'END:VEVENT') {
         if (current != null) imported.add(current);
         current = null;
@@ -478,8 +511,9 @@ class EventController extends GetxController {
     final idx = events.indexWhere((e) => e.id == id);
     if (idx == -1) return;
     final key = _dayKey(date);
-    final updated = events[idx]
-        .copyWith(skippedOccurrences: [...events[idx].skippedOccurrences, key]);
+    final updated = events[idx].copyWith(
+      skippedOccurrences: [...events[idx].skippedOccurrences, key],
+    );
     await updateEvent(id, updated);
   }
 
@@ -682,8 +716,9 @@ class EventController extends GetxController {
   }
 
   String _formatAsIcs(DateTime dt) {
-    final utc = dt.toUtc();
-    return utc.toIso8601String().replaceAll('-', '').replaceAll(':', '');
+    final utc = dt.toUtc().toIso8601String();
+    final main = utc.split('.').first;
+    return '${main.replaceAll('-', '').replaceAll(':', '')}Z';
   }
 
   DateTime _parseIcsDate(String raw) {

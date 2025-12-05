@@ -331,6 +331,12 @@ class EventTabScreen extends StatelessWidget {
           ),
           SliverToBoxAdapter(
             child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+              child: Obx(() => _EventStats(controller: controller)),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: GetX<EventController>(
                 builder: (ctrl) {
@@ -446,9 +452,10 @@ class EventTabScreen extends StatelessWidget {
                                     final isCurrentMonth =
                                         date.month == focusedMonth.month;
                                     final isToday = _isSameDate(date, now);
-                                    final hasEvent = events.any(
-                                      (event) => _isSameDate(event.date, date),
+                                    final todaysEvents = ctrl.eventsForDate(
+                                      date,
                                     );
+                                    final hasEvent = todaysEvents.isNotEmpty;
                                     final isWeekend =
                                         date.weekday == DateTime.sunday;
 
@@ -529,15 +536,29 @@ class EventTabScreen extends StatelessWidget {
                                             ),
                                             const SizedBox(height: 3),
                                             if (hasEvent)
-                                              Container(
-                                                width: 8,
-                                                height: 8,
-                                                decoration: BoxDecoration(
-                                                  color: isToday
-                                                      ? Colors.white
-                                                      : Colors.blue.shade400,
-                                                  shape: BoxShape.circle,
-                                                ),
+                                              Wrap(
+                                                spacing: 2,
+                                                runSpacing: 2,
+                                                alignment: WrapAlignment.center,
+                                                children: todaysEvents
+                                                    .take(3)
+                                                    .map(
+                                                      (event) => Container(
+                                                        width: 6,
+                                                        height: 6,
+                                                        decoration: BoxDecoration(
+                                                          color: isToday
+                                                              ? Colors.white
+                                                              : _categoryColor(
+                                                                  event
+                                                                      .category,
+                                                                ),
+                                                          shape:
+                                                              BoxShape.circle,
+                                                        ),
+                                                      ),
+                                                    )
+                                                    .toList(),
                                               ),
                                           ],
                                         ),
@@ -676,6 +697,177 @@ class _LegendDot extends StatelessWidget {
         ),
       ],
     );
+  }
+}
+
+class _EventStats extends StatelessWidget {
+  final EventController controller;
+
+  const _EventStats({required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
+    final categories = controller.categoryBreakdown;
+    final reminderLogs = controller.reminderLog.reversed.take(3).toList();
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              _StatTile(
+                label: 'Tuần này',
+                value: controller.eventsThisWeek.toString(),
+                color: Colors.blue,
+              ),
+              const SizedBox(width: 12),
+              _StatTile(
+                label: 'Tháng này',
+                value: controller.eventsThisMonth.toString(),
+                color: Colors.green,
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          const Text(
+            'Nhắc gần đây',
+            style: TextStyle(fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(height: 6),
+          if (reminderLogs.isEmpty)
+            Text(
+              'Chưa có nhắc nào, thêm sự kiện để theo dõi.',
+              style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+            )
+          else
+            ...reminderLogs
+                .map(
+                  (log) => Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 2),
+                    child: Text(
+                      log,
+                      style: TextStyle(
+                        color: Colors.grey.shade700,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                )
+                .toList(),
+          if (categories.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            const Text(
+              'Phân bố danh mục',
+              style: TextStyle(fontWeight: FontWeight.w700),
+            ),
+            const SizedBox(height: 6),
+            Wrap(
+              spacing: 8,
+              runSpacing: 6,
+              children: categories.entries
+                  .map(
+                    (entry) => Chip(
+                      backgroundColor: _categoryColor(
+                        entry.key,
+                      ).withOpacity(0.12),
+                      label: Text(
+                        '${_categoryLabel(entry.key)} (${entry.value})',
+                        style: TextStyle(color: _categoryColor(entry.key)),
+                      ),
+                    ),
+                  )
+                  .toList(),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _StatTile extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color color;
+
+  const _StatTile({
+    required this.label,
+    required this.value,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.08),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: color.withOpacity(0.2)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              value,
+              style: TextStyle(
+                color: color,
+                fontWeight: FontWeight.w800,
+                fontSize: 20,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: TextStyle(color: color.withOpacity(0.8), fontSize: 12),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+Color _categoryColor(String category) {
+  switch (category) {
+    case 'personal':
+      return const Color(0xFF2563EB);
+    case 'work':
+      return const Color(0xFF16A34A);
+    case 'health':
+      return const Color(0xFF0EA5E9);
+    case 'holiday':
+      return const Color(0xFFF97316);
+    default:
+      return const Color(0xFF6B7280);
+  }
+}
+
+String _categoryLabel(String category) {
+  switch (category) {
+    case 'personal':
+      return 'Cá nhân';
+    case 'work':
+      return 'Công việc';
+    case 'health':
+      return 'Sức khỏe';
+    case 'holiday':
+      return 'Lịch lễ';
+    default:
+      return 'Khác';
   }
 }
 

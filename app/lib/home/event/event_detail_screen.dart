@@ -337,7 +337,10 @@ class EventDayDetailScreen extends StatelessWidget {
                                     const SizedBox(height: 4),
                                     Text(
                                       '${_formatTime(event.startTime)} - ${_formatTime(event.endTime)}',
-                                      style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+                                      style: TextStyle(
+                                        color: Colors.grey.shade600,
+                                        fontSize: 12,
+                                      ),
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
@@ -370,16 +373,47 @@ class EventDayDetailScreen extends StatelessWidget {
                                       const SizedBox(height: 4),
                                       Row(
                                         children: [
-                                          const Icon(Icons.place_outlined, size: 14, color: Colors.redAccent),
+                                          const Icon(
+                                            Icons.place_outlined,
+                                            size: 14,
+                                            color: Colors.redAccent,
+                                          ),
                                           const SizedBox(width: 4),
                                           Expanded(
                                             child: Text(
                                               event.locationName!,
-                                              style: TextStyle(color: Colors.grey.shade700, fontSize: 12),
+                                              style: TextStyle(
+                                                color: Colors.grey.shade700,
+                                                fontSize: 12,
+                                              ),
                                             ),
                                           ),
                                         ],
                                       ),
+                                      if (event.mapUrl != null &&
+                                          event.mapUrl!.isNotEmpty) ...[
+                                        const SizedBox(height: 4),
+                                        SelectableText(
+                                          'Link: ${event.mapUrl}',
+                                          style: TextStyle(
+                                            color: Colors.blue.shade600,
+                                            fontSize: 12,
+                                            decoration:
+                                                TextDecoration.underline,
+                                          ),
+                                        ),
+                                      ],
+                                      if (event.notes != null &&
+                                          event.notes!.isNotEmpty) ...[
+                                        const SizedBox(height: 6),
+                                        Text(
+                                          event.notes!,
+                                          style: TextStyle(
+                                            color: Colors.grey.shade700,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                      ],
                                     ],
                                     if (event.guests.isNotEmpty) ...[
                                       const SizedBox(height: 6),
@@ -391,9 +425,12 @@ class EventDayDetailScreen extends StatelessWidget {
                                               (guest) => Chip(
                                                 label: Text(
                                                   guest,
-                                                  style: const TextStyle(fontSize: 11),
+                                                  style: const TextStyle(
+                                                    fontSize: 11,
+                                                  ),
                                                 ),
-                                                backgroundColor: Colors.blue.shade50,
+                                                backgroundColor:
+                                                    Colors.blue.shade50,
                                               ),
                                             )
                                             .toList(),
@@ -402,12 +439,16 @@ class EventDayDetailScreen extends StatelessWidget {
                                     if (event.attachments.isNotEmpty) ...[
                                       const SizedBox(height: 6),
                                       Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: event.attachments
                                             .map(
                                               (att) => Text(
                                                 '• $att',
-                                                style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+                                                style: TextStyle(
+                                                  color: Colors.grey.shade600,
+                                                  fontSize: 12,
+                                                ),
                                               ),
                                             )
                                             .toList(),
@@ -419,34 +460,61 @@ class EventDayDetailScreen extends StatelessWidget {
                                       runSpacing: 4,
                                       children: [
                                         TextButton.icon(
-                                          onPressed: () => Get.to(() => EventCreateScreen(initialDate: event.date, event: event)),
-                                          icon: const Icon(Icons.edit_outlined, size: 16),
+                                          onPressed: () => Get.to(
+                                            () => EventCreateScreen(
+                                              initialDate: event.date,
+                                              event: event,
+                                            ),
+                                          ),
+                                          icon: const Icon(
+                                            Icons.edit_outlined,
+                                            size: 16,
+                                          ),
                                           label: const Text('Chỉnh sửa'),
                                         ),
                                         TextButton.icon(
                                           onPressed: () async {
-                                            await controller.deleteEvent(event.id);
+                                            await controller.deleteEvent(
+                                              event.id,
+                                            );
                                             Get.snackbar(
                                               'Đã xoá',
                                               'Sự kiện đã bị xoá',
-                                              snackPosition: SnackPosition.BOTTOM,
+                                              snackPosition:
+                                                  SnackPosition.BOTTOM,
                                               mainButton: TextButton(
-                                                onPressed: () => controller.undoDelete(),
+                                                onPressed: () =>
+                                                    controller.undoDelete(),
                                                 child: const Text('Hoàn tác'),
                                               ),
                                             );
                                           },
-                                          icon: const Icon(Icons.delete_outline, size: 16, color: Colors.red),
-                                          label: const Text('Xoá', style: TextStyle(color: Colors.red)),
+                                          icon: const Icon(
+                                            Icons.delete_outline,
+                                            size: 16,
+                                            color: Colors.red,
+                                          ),
+                                          label: const Text(
+                                            'Xoá',
+                                            style: TextStyle(color: Colors.red),
+                                          ),
                                         ),
                                         TextButton.icon(
-                                          onPressed: () => controller.snoozeEvent(event.id, const Duration(minutes: 5)),
-                                          icon: const Icon(Icons.snooze, size: 16),
+                                          onPressed: () =>
+                                              controller.snoozeEvent(
+                                                event.id,
+                                                const Duration(minutes: 5),
+                                              ),
+                                          icon: const Icon(
+                                            Icons.snooze,
+                                            size: 16,
+                                          ),
                                           label: const Text('Snooze 5p'),
                                         ),
                                         if (event.recurrence != 'none')
                                           TextButton(
-                                            onPressed: () => controller.skipOccurrence(event.id, date),
+                                            onPressed: () async => controller
+                                                .skipOccurrence(event.id, date),
                                             child: const Text('Bỏ qua lần này'),
                                           ),
                                       ],
@@ -569,6 +637,9 @@ class _CategoryBadge extends StatelessWidget {
   }
 }
 
+String _formatTime(DateTime dt) =>
+    '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+
 class EventCreateScreen extends StatefulWidget {
   final DateTime? initialDate;
   final Event? event;
@@ -629,7 +700,9 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
     final now = DateTime.now();
     final existing = widget.event;
     _selectedDate = existing?.date ?? widget.initialDate ?? now;
-    _startTime = existing != null ? TimeOfDay.fromDateTime(existing.startTime) : TimeOfDay(hour: now.hour, minute: now.minute);
+    _startTime = existing != null
+        ? TimeOfDay.fromDateTime(existing.startTime)
+        : TimeOfDay(hour: now.hour, minute: now.minute);
     _endTime = existing != null
         ? TimeOfDay.fromDateTime(existing.endTime)
         : TimeOfDay(hour: (now.hour + 1) % 24, minute: now.minute);
@@ -674,14 +747,20 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
   }
 
   Future<void> _pickStartTime() async {
-    final picked = await showTimePicker(context: context, initialTime: _startTime);
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: _startTime,
+    );
     if (picked != null) {
       setState(() => _startTime = picked);
     }
   }
 
   Future<void> _pickEndTime() async {
-    final picked = await showTimePicker(context: context, initialTime: _endTime);
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: _endTime,
+    );
     if (picked != null) {
       setState(() => _endTime = picked);
     }
@@ -715,7 +794,9 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
       _endTime.hour,
       _endTime.minute,
     );
-    final end = tentativeEnd.isAfter(start) ? tentativeEnd : start.add(const Duration(hours: 1));
+    final end = tentativeEnd.isAfter(start)
+        ? tentativeEnd
+        : start.add(const Duration(hours: 1));
     final attachments = _attachmentsCtrl.text
         .split('\n')
         .map((e) => e.trim())
@@ -738,8 +819,12 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
       reminders: _selectedReminders,
       recurrence: _recurrence,
       recurrenceEnd: _recurrenceEnd,
-      customRecurrenceRule: _recurrence == 'custom' ? _customRecurrenceCtrl.text.trim() : null,
-      locationName: _locationCtrl.text.trim().isEmpty ? null : _locationCtrl.text.trim(),
+      customRecurrenceRule: _recurrence == 'custom'
+          ? _customRecurrenceCtrl.text.trim()
+          : null,
+      locationName: _locationCtrl.text.trim().isEmpty
+          ? null
+          : _locationCtrl.text.trim(),
       mapUrl: _mapCtrl.text.trim().isEmpty ? null : _mapCtrl.text.trim(),
       attachments: attachments,
       guests: guests,
@@ -883,14 +968,18 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
                           Expanded(
                             child: OutlinedButton(
                               onPressed: _pickStartTime,
-                              child: Text('Bắt đầu: ${_startTime.format(context)}'),
+                              child: Text(
+                                'Bắt đầu: ${_startTime.format(context)}',
+                              ),
                             ),
                           ),
                           const SizedBox(width: 10),
                           Expanded(
                             child: OutlinedButton(
                               onPressed: _pickEndTime,
-                              child: Text('Kết thúc: ${_endTime.format(context)}'),
+                              child: Text(
+                                'Kết thúc: ${_endTime.format(context)}',
+                              ),
                             ),
                           ),
                         ],
@@ -898,7 +987,10 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
                       const SizedBox(height: 8),
                       Text(
                         'Timezone: ${DateTime.now().timeZoneName}',
-                        style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+                        style: TextStyle(
+                          color: Colors.grey.shade600,
+                          fontSize: 12,
+                        ),
                       ),
                     ],
                   ),
@@ -956,22 +1048,37 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
-                      BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 10, offset: const Offset(0, 4)),
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.04),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
                     ],
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Mức ưu tiên', style: TextStyle(fontWeight: FontWeight.w700)),
+                      const Text(
+                        'Mức ưu tiên',
+                        style: TextStyle(fontWeight: FontWeight.w700),
+                      ),
                       const SizedBox(height: 8),
                       Wrap(
                         spacing: 10,
                         children: _priorityOptions.map((item) {
                           final selected = _priority == item['key'];
                           return ChoiceChip(
-                            label: Text(item['label'] as String, style: TextStyle(color: selected ? Colors.white : Colors.black87, fontWeight: FontWeight.w700)),
+                            label: Text(
+                              item['label'] as String,
+                              style: TextStyle(
+                                color: selected ? Colors.white : Colors.black87,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
                             selected: selected,
-                            onSelected: (_) => setState(() => _priority = item['key'] as String),
+                            onSelected: (_) => setState(
+                              () => _priority = item['key'] as String,
+                            ),
                             selectedColor: item['color'] as Color,
                             backgroundColor: Colors.grey.shade100,
                           );
@@ -987,13 +1094,20 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
-                      BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 10, offset: const Offset(0, 4)),
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.04),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
                     ],
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Nhắc trước', style: TextStyle(fontWeight: FontWeight.w700)),
+                      const Text(
+                        'Nhắc trước',
+                        style: TextStyle(fontWeight: FontWeight.w700),
+                      ),
                       const SizedBox(height: 8),
                       Wrap(
                         spacing: 8,
@@ -1016,7 +1130,13 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
                             .toList(),
                       ),
                       const SizedBox(height: 8),
-                      Text('Nhắc sẽ được mô phỏng qua log trong app.', style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
+                      Text(
+                        'Nhắc sẽ được mô phỏng qua log trong app.',
+                        style: TextStyle(
+                          color: Colors.grey.shade600,
+                          fontSize: 12,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -1027,13 +1147,20 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
-                      BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 10, offset: const Offset(0, 4)),
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.04),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
                     ],
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Lặp lại', style: TextStyle(fontWeight: FontWeight.w700)),
+                      const Text(
+                        'Lặp lại',
+                        style: TextStyle(fontWeight: FontWeight.w700),
+                      ),
                       const SizedBox(height: 8),
                       DropdownButtonFormField<String>(
                         value: _recurrence,
@@ -1045,8 +1172,12 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
                               ),
                             )
                             .toList(),
-                        onChanged: (value) => setState(() => _recurrence = value ?? 'none'),
-                        decoration: const InputDecoration(border: OutlineInputBorder(), isDense: true),
+                        onChanged: (value) =>
+                            setState(() => _recurrence = value ?? 'none'),
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          isDense: true,
+                        ),
                       ),
                       if (_recurrence == 'custom') ...[
                         const SizedBox(height: 10),
@@ -1065,7 +1196,9 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
                         children: [
                           Expanded(
                             child: Text(
-                              _recurrenceEnd == null ? 'Không giới hạn' : 'Kết thúc: ${_recurrenceEnd!.day}/${_recurrenceEnd!.month}/${_recurrenceEnd!.year}',
+                              _recurrenceEnd == null
+                                  ? 'Không giới hạn'
+                                  : 'Kết thúc: ${_recurrenceEnd!.day}/${_recurrenceEnd!.month}/${_recurrenceEnd!.year}',
                               style: TextStyle(color: Colors.grey.shade700),
                             ),
                           ),
@@ -1085,13 +1218,20 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
-                      BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 10, offset: const Offset(0, 4)),
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.04),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
                     ],
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Địa điểm & Liên kết', style: TextStyle(fontWeight: FontWeight.w700)),
+                      const Text(
+                        'Địa điểm & Liên kết',
+                        style: TextStyle(fontWeight: FontWeight.w700),
+                      ),
                       const SizedBox(height: 8),
                       TextField(
                         controller: _locationCtrl,
@@ -1120,13 +1260,20 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
-                      BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 10, offset: const Offset(0, 4)),
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.04),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
                     ],
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Khách mời & Tài liệu', style: TextStyle(fontWeight: FontWeight.w700)),
+                      const Text(
+                        'Khách mời & Tài liệu',
+                        style: TextStyle(fontWeight: FontWeight.w700),
+                      ),
                       const SizedBox(height: 8),
                       TextField(
                         controller: _guestsCtrl,
