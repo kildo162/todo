@@ -36,6 +36,42 @@ class LunisolarConverter {
   static const int _timeZone = 7;
   static const List<String> _can = ['Giáp', 'Ất', 'Bính', 'Đinh', 'Mậu', 'Kỷ', 'Canh', 'Tân', 'Nhâm', 'Quý'];
   static const List<String> _chi = ['Tý', 'Sửu', 'Dần', 'Mão', 'Thìn', 'Tỵ', 'Ngọ', 'Mùi', 'Thân', 'Dậu', 'Tuất', 'Hợi'];
+  static const List<String> _solarTerms = [
+    'Xuân phân',
+    'Thanh minh',
+    'Cốc vũ',
+    'Lập hạ',
+    'Tiểu mãn',
+    'Mang chủng',
+    'Hạ chí',
+    'Tiểu thử',
+    'Đại thử',
+    'Lập thu',
+    'Xử thử',
+    'Bạch lộ',
+    'Thu phân',
+    'Hàn lộ',
+    'Sương giáng',
+    'Lập đông',
+    'Tiểu tuyết',
+    'Đại tuyết',
+    'Đông chí',
+    'Tiểu hàn',
+    'Đại hàn',
+    'Lập xuân',
+    'Vũ thủy',
+    'Kinh trập',
+  ];
+
+  // Bảng hoàng đạo phổ biến: tháng Giêng (1) lấy Tý, Sửu, Tỵ, Ngọ, Mùi, Dậu rồi dịch +2 chi mỗi tháng, lặp lại sau 6 tháng.
+  static const List<List<int>> _hoangDaoDaysByMonth = [
+    [0, 1, 5, 6, 7, 9], // tháng 1 & 7: Tý, Sửu, Tỵ, Ngọ, Mùi, Dậu
+    [2, 3, 7, 8, 9, 11], // tháng 2 & 8: Dần, Mão, Mùi, Thân, Dậu, Hợi
+    [4, 5, 9, 10, 11, 1], // tháng 3 & 9: Thìn, Tỵ, Dậu, Tuất, Hợi, Sửu
+    [6, 7, 11, 0, 1, 3], // tháng 4 & 10: Ngọ, Mùi, Hợi, Tý, Sửu, Mão
+    [8, 9, 1, 2, 3, 5], // tháng 5 & 11: Thân, Dậu, Sửu, Dần, Mão, Tỵ
+    [10, 11, 3, 4, 5, 7], // tháng 6 & 12: Tuất, Hợi, Mão, Thìn, Tỵ, Mùi
+  ];
 
   static LunarDate solarToLunar(DateTime date) {
     final julianDay = _jdFromDate(date.day, date.month, date.year);
@@ -123,6 +159,10 @@ class LunisolarConverter {
     return (_sunLongitude(dayNumber - 0.5 - timeZone / 24) / math.pi * 6).floor();
   }
 
+  static int _getSolarTermIndex(double dayNumber, int timeZone) {
+    return (_sunLongitude(dayNumber - 0.5 - timeZone / 24) / math.pi * 12).floor();
+  }
+
   static double _newMoon(int k) {
     final double t = k / 1236.85;
     final double t2 = t * t;
@@ -196,6 +236,24 @@ class LunisolarConverter {
     final int k = ((a11 - 2415021.076998695) / 29.530588853 + 0.5).floor();
     final int monthStart = _getNewMoonDay(k + off, _timeZone);
     return _jdToDate(monthStart + lunarDate.day - 1);
+  }
+
+  static String solarTerm(DateTime date) {
+    final int jd = _jdFromDate(date.day, date.month, date.year);
+    final int termIndex = _getSolarTermIndex(jd.toDouble(), _timeZone) % _solarTerms.length;
+    return _solarTerms[termIndex];
+  }
+
+  static bool isHoangDaoDay(DateTime date) {
+    final lunar = solarToLunar(date);
+    final int jd = _jdFromDate(date.day, date.month, date.year);
+    final int dayChiIdx = (jd + 1) % 12;
+    final List<int> pattern = _hoangDaoDaysByMonth[(lunar.month - 1) % _hoangDaoDaysByMonth.length];
+    return pattern.contains(dayChiIdx);
+  }
+
+  static String hoangDaoLabel(DateTime date) {
+    return isHoangDaoDay(date) ? 'Hoàng đạo' : 'Hắc đạo';
   }
 
   static CanChiInfo canChi(DateTime date) {

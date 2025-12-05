@@ -37,6 +37,7 @@ class LoginScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 32),
                 TextField(
+                  controller: controller.emailController,
                   onChanged: (value) => controller.email.value = value,
                   decoration: InputDecoration(
                     hintText: 'Username',
@@ -51,6 +52,7 @@ class LoginScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 16),
                 TextField(
+                  controller: controller.passwordController,
                   onChanged: (value) => controller.password.value = value,
                   decoration: InputDecoration(
                     hintText: 'Password',

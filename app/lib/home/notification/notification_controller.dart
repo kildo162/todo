@@ -85,4 +85,18 @@ class NotificationController extends GetxController {
   void markAllAsRead() {
     notifications.value = notifications.map((n) => n.copyWith(read: true)).toList();
   }
+
+  NotificationModel addTestNotification({
+    String title = 'Thông báo thử',
+    String body = 'Đây là thông báo thử từ trang Hồ sơ.',
+  }) {
+    final item = NotificationModel(
+      title: title,
+      body: body,
+      read: false,
+      time: DateTime.now(),
+    );
+    notifications.insert(0, item);
+    return item;
+  }
 }

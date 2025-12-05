@@ -26,6 +26,9 @@ class EventDayDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final lunar = LunisolarConverter.solarToLunar(date);
     final canChi = LunisolarConverter.canChi(date);
+    final solarTerm = LunisolarConverter.solarTerm(date);
+    final bool isHoangDao = LunisolarConverter.isHoangDaoDay(date);
+    final String hoangDaoLabel = isHoangDao ? 'Hoàng đạo' : 'Hắc đạo';
     final events = controller.eventsForDate(date)..sort((a, b) => a.date.compareTo(b.date));
 
     return SwipeBackWrapper(
@@ -124,6 +127,31 @@ class EventDayDetailScreen extends StatelessWidget {
                         _Tag(label: '${canChi.monthCan} ${canChi.monthChi}', caption: 'Tháng'),
                         const SizedBox(width: 8),
                         _Tag(label: '${canChi.yearCan} ${canChi.yearChi}', caption: 'Năm'),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4)),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('Tiết khí & Hoàng đạo', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700)),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        _Tag(label: solarTerm, caption: 'Tiết khí'),
+                        const SizedBox(width: 8),
+                        _Tag(label: hoangDaoLabel, caption: 'Ngày'),
                       ],
                     )
                   ],

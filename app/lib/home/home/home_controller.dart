@@ -81,6 +81,10 @@ class HomeController extends GetxController {
     if (raw != null && raw.isNotEmpty) {
       final decoded = jsonDecode(raw) as List<dynamic>;
       quickActions.assignAll(decoded.map((e) => QuickAction.fromJson(e as Map<String, dynamic>)).toList());
+      final added = _ensureRequiredActions();
+      if (added) {
+        await _saveActions();
+      }
     } else {
       quickActions.assignAll(_defaultActions());
     }
@@ -92,11 +96,25 @@ class HomeController extends GetxController {
     await prefs.setString(_storageKey, data);
   }
 
+  bool _ensureRequiredActions() {
+    final defaults = _defaultActions();
+    final existingIds = quickActions.map((e) => e.id).toSet();
+    var added = false;
+    for (final item in defaults) {
+      if (!existingIds.contains(item.id)) {
+        quickActions.add(item);
+        added = true;
+      }
+    }
+    return added;
+  }
+
   List<QuickAction> _defaultActions() {
     return const [
       QuickAction(id: 'event', label: 'Sự kiện', icon: 'assets/icons/solid/calendar.svg', enabled: true),
+      QuickAction(id: 'todo', label: 'Việc cần làm', icon: 'assets/icons/solid/clipboard-document-check.svg', enabled: true),
       QuickAction(id: 'notification', label: 'Thông báo', icon: 'assets/icons/solid/bell.svg', enabled: true),
-      QuickAction(id: 'note', label: 'Ghi chú', icon: 'assets/icons/solid/check-circle.svg', enabled: true),
+      QuickAction(id: 'note', label: 'Ghi chú', icon: 'assets/icons/solid/pencil-square.svg', enabled: true),
       QuickAction(id: 'settings', label: 'Cài đặt', icon: 'assets/icons/solid/cog-6-tooth.svg', enabled: true),
       QuickAction(id: 'manage', label: 'Quản lý lối tắt', icon: 'assets/icons/solid/squares-2x2.svg', enabled: true),
     ];
