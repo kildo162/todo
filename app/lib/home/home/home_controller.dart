@@ -113,8 +113,10 @@ class HomeController extends GetxController {
     return const [
       QuickAction(id: 'event', label: 'Sự kiện', icon: 'assets/icons/solid/calendar.svg', enabled: true),
       QuickAction(id: 'todo', label: 'Việc cần làm', icon: 'assets/icons/solid/clipboard-document-check.svg', enabled: true),
+      QuickAction(id: 'sutra', label: 'Kinh kệ', icon: 'assets/icons/solid/book-open.svg', enabled: true),
       QuickAction(id: 'notification', label: 'Thông báo', icon: 'assets/icons/solid/bell.svg', enabled: true),
       QuickAction(id: 'note', label: 'Ghi chú', icon: 'assets/icons/solid/pencil-square.svg', enabled: true),
+      QuickAction(id: 'health', label: 'Sức khỏe', icon: 'assets/icons/solid/heart.svg', enabled: true),
       QuickAction(id: 'settings', label: 'Cài đặt', icon: 'assets/icons/solid/cog-6-tooth.svg', enabled: true),
       QuickAction(id: 'manage', label: 'Quản lý lối tắt', icon: 'assets/icons/solid/squares-2x2.svg', enabled: true),
     ];

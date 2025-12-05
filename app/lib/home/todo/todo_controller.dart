@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'todo_model.dart';
@@ -8,6 +9,9 @@ class TodoController extends GetxController {
 
   final tasks = <TodoItem>[].obs;
   final filter = 'all'.obs; // all | active | done | overdue
+  final searchQuery = ''.obs;
+  final sort = 'priority'.obs; // priority | due | recent | title
+  final TextEditingController searchTextCtrl = TextEditingController();
 
   @override
   void onInit() {
@@ -30,14 +34,36 @@ class TodoController extends GetxController {
         list = tasks.where((t) => !t.completed && t.dueDate != null && t.dueDate!.isBefore(start)).toList();
         break;
       default:
-        list = tasks;
+        list = tasks.toList();
     }
-    list.sort(_sortComparator(start));
+    final keyword = searchQuery.value.trim().toLowerCase();
+    if (keyword.isNotEmpty) {
+      list = list
+          .where((t) =>
+              t.title.toLowerCase().contains(keyword) ||
+              (t.description ?? '').toLowerCase().contains(keyword))
+          .toList();
+    }
+
+    list.sort(_sortComparator(start, sort.value));
     return list;
   }
 
   void setFilter(String value) {
     filter.value = value;
+  }
+
+  void setSearch(String value) {
+    searchQuery.value = value;
+  }
+
+  void clearSearch() {
+    searchQuery.value = '';
+    searchTextCtrl.clear();
+  }
+
+  void setSort(String value) {
+    sort.value = value;
   }
 
   Future<void> addTask(String title, {String? description, DateTime? dueDate, String priority = 'normal'}) async {
@@ -78,6 +104,12 @@ class TodoController extends GetxController {
     await _save();
   }
 
+  Future<void> restoreTask(TodoItem task, {int? index}) async {
+    final insertIndex = index != null && index >= 0 && index <= tasks.length ? index : 0;
+    tasks.insert(insertIndex, task);
+    await _save();
+  }
+
   Future<void> _load() async {
     final prefs = await SharedPreferences.getInstance();
     final raw = prefs.getString(_storageKey);
@@ -93,7 +125,7 @@ class TodoController extends GetxController {
     await prefs.setString(_storageKey, data);
   }
 
-  int Function(TodoItem, TodoItem) _sortComparator(DateTime todayStart) {
+  int Function(TodoItem, TodoItem) _sortComparator(DateTime todayStart, String sortBy) {
     return (a, b) {
       int priorityScore(String p) {
         switch (p) {
@@ -112,19 +144,43 @@ class TodoController extends GetxController {
       final ob = overdue(b);
       if (oa != ob) return oa ? -1 : 1;
 
-      final pa = priorityScore(a.priority);
-      final pb = priorityScore(b.priority);
-      if (pa != pb) return pb.compareTo(pa); // high first
+      switch (sortBy) {
+        case 'due':
+          if (a.dueDate != null && b.dueDate != null) {
+            if (a.dueDate != b.dueDate) return a.dueDate!.compareTo(b.dueDate!);
+          } else if (a.dueDate != null) {
+            return -1;
+          } else if (b.dueDate != null) {
+            return 1;
+          }
+          final paDue = priorityScore(a.priority).compareTo(priorityScore(b.priority));
+          if (paDue != 0) return -paDue;
+          return b.createdAt.compareTo(a.createdAt);
+        case 'recent':
+          return b.createdAt.compareTo(a.createdAt);
+        case 'title':
+          return a.title.toLowerCase().compareTo(b.title.toLowerCase());
+        default:
+          final pa = priorityScore(a.priority);
+          final pb = priorityScore(b.priority);
+          if (pa != pb) return pb.compareTo(pa); // high first
 
-      if (a.dueDate != null && b.dueDate != null) {
-        if (a.dueDate != b.dueDate) return a.dueDate!.compareTo(b.dueDate!);
-      } else if (a.dueDate != null) {
-        return -1;
-      } else if (b.dueDate != null) {
-        return 1;
+          if (a.dueDate != null && b.dueDate != null) {
+            if (a.dueDate != b.dueDate) return a.dueDate!.compareTo(b.dueDate!);
+          } else if (a.dueDate != null) {
+            return -1;
+          } else if (b.dueDate != null) {
+            return 1;
+          }
+
+          return b.createdAt.compareTo(a.createdAt);
       }
-
-      return b.createdAt.compareTo(a.createdAt);
     };
+  }
+
+  @override
+  void onClose() {
+    searchTextCtrl.dispose();
+    super.onClose();
   }
 }

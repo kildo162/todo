@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:app/shared/app_theme.dart';
 import 'todo_controller.dart';
 import 'todo_model.dart';
 
@@ -17,19 +18,15 @@ class TodoScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FB),
+      backgroundColor: AppColors.background,
       appBar: AppBar(
         toolbarHeight: 70,
         backgroundColor: Colors.transparent,
         elevation: 0,
         flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xFF1F72E5), Color(0xFF42C0F0)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            borderRadius: BorderRadius.vertical(bottom: Radius.circular(18)),
+          decoration: BoxDecoration(
+            gradient: AppColors.primaryGradient,
+            borderRadius: const BorderRadius.vertical(bottom: Radius.circular(AppRadii.large)),
           ),
         ),
         titleSpacing: 16,
@@ -79,11 +76,14 @@ class TodoScreen extends StatelessWidget {
             SliverToBoxAdapter(
               child: _buildSummaryCard(active: active, done: done, overdue: overdue, total: total),
             ),
+            SliverToBoxAdapter(
+              child: _buildSearchAndSortBar(context),
+            ),
             SliverPersistentHeader(
               pinned: true,
               delegate: _FilterHeaderDelegate(
-                minHeight: 72,
-                maxHeight: 72,
+                minHeight: 64,
+                maxHeight: 64,
                 child: _buildFilterBar(total: total, active: active, done: done, overdue: overdue),
               ),
             ),
@@ -102,7 +102,7 @@ class TodoScreen extends StatelessWidget {
                       return _TodoTile(
                         task: task,
                         onToggle: () => controller.toggleTask(task.id),
-                        onDelete: () => controller.deleteTask(task.id),
+                        onDelete: () => _handleDelete(context, task),
                         onEdit: () => _showCreateSheet(context, task: task),
                       );
                     },
@@ -129,11 +129,9 @@ class TodoScreen extends StatelessWidget {
       margin: const EdgeInsets.fromLTRB(16, 12, 16, 10),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 18, offset: const Offset(0, 8)),
-        ],
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(AppRadii.large),
+        boxShadow: AppShadows.card,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -142,21 +140,21 @@ class TodoScreen extends StatelessWidget {
             children: [
               Container(
                 padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(color: Colors.blue.shade50, shape: BoxShape.circle),
-                child: _svg('assets/icons/outline/clipboard-document-check.svg', size: 18, color: Colors.blue.shade700),
+                decoration: const BoxDecoration(color: Color(0xFFEFF4FF), shape: BoxShape.circle),
+                child: _svg('assets/icons/outline/clipboard-document-check.svg', size: 18, color: AppColors.primary),
               ),
               const SizedBox(width: 10),
               const Expanded(
-                child: Text('Tổng quan công việc', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
+                child: Text('Tổng quan công việc', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16, color: AppColors.textPrimary)),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                decoration: BoxDecoration(color: Colors.blue.shade50, borderRadius: BorderRadius.circular(10)),
+                decoration: BoxDecoration(color: AppColors.primary.withOpacity(0.08), borderRadius: BorderRadius.circular(AppRadii.medium)),
                 child: Row(
                   children: [
-                    const Icon(Icons.view_agenda_outlined, size: 14, color: Colors.blue),
+                    const Icon(Icons.view_agenda_outlined, size: 14, color: AppColors.primary),
                     const SizedBox(width: 6),
-                    Text('$total task', style: TextStyle(color: Colors.blue.shade700, fontWeight: FontWeight.w700, fontSize: 12)),
+                    Text('$total task', style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w700, fontSize: 12)),
                   ],
                 ),
               ),
@@ -192,6 +190,101 @@ class TodoScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildSearchAndSortBar(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              controller: controller.searchTextCtrl,
+              onChanged: controller.setSearch,
+              decoration: InputDecoration(
+                hintText: 'Tìm kiếm tiêu đề, mô tả...',
+                prefixIcon: Icon(Icons.search, color: colorScheme.primary),
+                suffixIcon: Obx(() {
+                  if (controller.searchQuery.value.isNotEmpty) {
+                    return IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: controller.clearSearch,
+                      splashRadius: 18,
+                    );
+                  }
+                  return const SizedBox.shrink();
+                }),
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppRadii.large),
+                  borderSide: BorderSide(color: AppColors.border),
+                ),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+              ),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Obx(() {
+            final sortKey = controller.sort.value;
+            return PopupMenuButton<String>(
+              onSelected: controller.setSort,
+              itemBuilder: (context) => [
+                _sortItem('priority', 'Ưu tiên trước'),
+                _sortItem('due', 'Sắp tới hạn'),
+                _sortItem('recent', 'Mới tạo'),
+                _sortItem('title', 'A → Z'),
+              ],
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(AppRadii.medium),
+                  border: Border.all(color: colorScheme.primary.withOpacity(0.3)),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.sort, size: 18, color: colorScheme.primary),
+                    const SizedBox(width: 6),
+                    Text(_sortLabel(sortKey), style: TextStyle(color: colorScheme.primary, fontWeight: FontWeight.w700)),
+                  ],
+                ),
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
+  PopupMenuItem<String> _sortItem(String key, String label) {
+    return PopupMenuItem(
+      value: key,
+      child: Row(
+        children: [
+          if (controller.sort.value == key) ...[
+            const Icon(Icons.check, size: 16, color: AppColors.primary),
+            const SizedBox(width: 8),
+          ],
+          Text(label),
+        ],
+      ),
+    );
+  }
+
+  String _sortLabel(String key) {
+    switch (key) {
+      case 'due':
+        return 'Sắp tới hạn';
+      case 'recent':
+        return 'Mới tạo';
+      case 'title':
+        return 'A → Z';
+      default:
+        return 'Ưu tiên';
+    }
+  }
+
   Widget _statPill(String label, int value, Color color) {
     return Expanded(
       child: Container(
@@ -215,7 +308,7 @@ class TodoScreen extends StatelessWidget {
 
   Widget _buildFilterBar({required int total, required int active, required int done, required int overdue}) {
     return Container(
-      color: const Color(0xFFF5F7FB),
+      color: AppColors.background,
       padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
@@ -431,7 +524,7 @@ class TodoScreen extends StatelessWidget {
                           controller.updateTask(task.id, title: title, description: desc, dueDate: dueDate, priority: priority);
                           Get.snackbar('Đã cập nhật', 'Task đã được lưu', snackPosition: SnackPosition.BOTTOM);
                         }
-                        Get.back();
+                        Navigator.of(ctx).pop();
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.blue.shade600,
@@ -448,6 +541,24 @@ class TodoScreen extends StatelessWidget {
           }),
         );
       },
+    );
+  }
+
+  Future<void> _handleDelete(BuildContext context, TodoItem task) async {
+    final originalIndex = controller.tasks.indexWhere((t) => t.id == task.id);
+    final messenger = ScaffoldMessenger.of(context);
+    await controller.deleteTask(task.id);
+    messenger.clearSnackBars();
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text('Đã xoá "${task.title}"'),
+        action: SnackBarAction(
+          label: 'Hoàn tác',
+          onPressed: () => controller.restoreTask(task, index: originalIndex),
+          textColor: AppColors.primary,
+        ),
+        behavior: SnackBarBehavior.floating,
+      ),
     );
   }
 }
@@ -469,7 +580,7 @@ class _FilterHeaderDelegate extends SliverPersistentHeaderDelegate {
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFFF5F7FB),
+        color: AppColors.background,
         boxShadow: overlapsContent
             ? [
                 BoxShadow(
@@ -522,12 +633,10 @@ class _TodoTile extends StatelessWidget {
           margin: const EdgeInsets.only(bottom: 12),
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: task.completed ? Colors.grey.shade100 : Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: overdue ? Colors.red.shade200 : accent.withOpacity(0.2)),
-            boxShadow: [
-              BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 10, offset: const Offset(0, 4)),
-            ],
+            color: task.completed ? Colors.grey.shade100 : AppColors.surface,
+            borderRadius: BorderRadius.circular(AppRadii.large),
+            border: Border.all(color: overdue ? Colors.red.shade200 : accent.withOpacity(0.16)),
+            boxShadow: AppShadows.card,
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -575,20 +684,21 @@ class _TodoTile extends StatelessWidget {
                       const SizedBox(height: 6),
                       Text(
                         task.description!,
-                        maxLines: 3,
+                        maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(color: Colors.grey.shade700, fontSize: 12.5, height: 1.35),
                       ),
                     ],
                     const SizedBox(height: 8),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 6,
-                      crossAxisAlignment: WrapCrossAlignment.center,
+                    Row(
                       children: [
                         _priorityChip(task.priority),
-                        if (task.dueDate != null) _dueChip(task, overdue: overdue),
-                        _statusChip(task.completed, overdue),
+                        if (task.dueDate != null) ...[
+                          const SizedBox(width: 10),
+                          _dueText(task, overdue: overdue),
+                        ],
+                        const Spacer(),
+                        _statusText(task.completed, overdue),
                       ],
                     ),
                   ],
@@ -632,55 +742,35 @@ class _TodoTile extends StatelessWidget {
     );
   }
 
-  Widget _dueChip(TodoItem task, {required bool overdue}) {
-    final color = overdue ? Colors.red.shade600 : Colors.grey.shade800;
-    final bg = overdue ? Colors.red.shade50 : Colors.grey.shade200;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(12)),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.calendar_today, size: 12, color: color),
-          const SizedBox(width: 4),
-          Text(
-            '${task.dueDate!.day}/${task.dueDate!.month}/${task.dueDate!.year}',
-            style: TextStyle(fontSize: 12, color: color, fontWeight: FontWeight.w700),
-          ),
-        ],
-      ),
+  Widget _dueText(TodoItem task, {required bool overdue}) {
+    final color = overdue ? Colors.red.shade600 : Colors.grey.shade700;
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(Icons.calendar_today, size: 12, color: color),
+        const SizedBox(width: 4),
+        Text(
+          '${task.dueDate!.day}/${task.dueDate!.month}/${task.dueDate!.year}',
+          style: TextStyle(fontSize: 12, color: color, fontWeight: FontWeight.w700),
+        ),
+      ],
     );
   }
 
-  Widget _statusChip(bool completed, bool overdue) {
+  Widget _statusText(bool completed, bool overdue) {
     String label;
     Color color;
-    Color bg;
     if (completed) {
       label = 'Đã xong';
       color = Colors.green.shade600;
-      bg = Colors.green.shade50;
     } else if (overdue) {
       label = 'Quá hạn';
       color = Colors.red.shade600;
-      bg = Colors.red.shade50;
     } else {
       label = 'Đang mở';
-      color = Colors.blue.shade600;
-      bg = Colors.blue.shade50;
+      color = AppColors.primary;
     }
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(12)),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(completed ? Icons.check_circle : Icons.timelapse, size: 14, color: color),
-          const SizedBox(width: 6),
-          Text(label, style: TextStyle(color: color, fontWeight: FontWeight.w700, fontSize: 12)),
-        ],
-      ),
-    );
+    return Text(label, style: TextStyle(color: color, fontWeight: FontWeight.w700, fontSize: 12));
   }
 
   Color _priorityColor(String priority) {
@@ -690,7 +780,7 @@ class _TodoTile extends StatelessWidget {
       case 'low':
         return Colors.green.shade500;
       default:
-        return Colors.blue.shade500;
+        return AppColors.primary;
     }
   }
 }

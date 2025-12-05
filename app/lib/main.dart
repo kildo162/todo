@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:app/login/login_screen.dart';
 import 'package:app/home/base_screen.dart';
 import 'package:app/shared/local_notification_service.dart';
+import 'package:app/shared/app_theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,9 +22,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'App',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: AppTheme.light,
       initialRoute: '/login',
       getPages: [
         GetPage(name: '/login', page: () => LoginScreen()),

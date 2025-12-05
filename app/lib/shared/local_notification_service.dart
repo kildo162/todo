@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class LocalNotificationService {
@@ -28,7 +27,7 @@ class LocalNotificationService {
     await _plugin.initialize(initSettings);
 
     final android = _plugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
-    await android?.requestPermission();
+    await android?.requestNotificationsPermission();
 
     _initialized = true;
   }
