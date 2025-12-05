@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'event_controller.dart';
+import '../../utils/lunisolar_calendar.dart';
 
 class EventTabScreen extends StatelessWidget {
   EventTabScreen({super.key});
@@ -61,8 +62,9 @@ class EventTabScreen extends StatelessWidget {
 
                           // Previous month days
                           for (int i = 0; i < weekdayOfFirstDay - 1; i++) {
+                            final date = DateTime(year, month - 1, startDayPrev + i);
                             calendarDays.add({
-                              'day': startDayPrev + i,
+                              'day': date,
                               'isCurrentMonth': false,
                               'isToday': false,
                             });
@@ -71,8 +73,9 @@ class EventTabScreen extends StatelessWidget {
                           // Current month days
                           for (int day = 1; day <= daysInMonth; day++) {
                             bool isToday = day == now.day && month == now.month && year == now.year;
+                            final date = DateTime(year, month, day);
                             calendarDays.add({
-                              'day': day,
+                              'day': date,
                               'isCurrentMonth': true,
                               'isToday': isToday,
                             });
@@ -81,8 +84,9 @@ class EventTabScreen extends StatelessWidget {
                           // Next month days
                           int remainingCells = totalCells - calendarDays.length;
                           for (int i = 1; i <= remainingCells; i++) {
+                            final date = DateTime(year, month + 1, i);
                             calendarDays.add({
-                              'day': i,
+                              'day': date,
                               'isCurrentMonth': false,
                               'isToday': false,
                             });
@@ -98,9 +102,16 @@ class EventTabScreen extends StatelessWidget {
                             itemCount: calendarDays.length,
                             itemBuilder: (context, index) {
                               var dayData = calendarDays[index];
-                              int day = dayData['day'];
+                              DateTime date = dayData['day'];
+                              final lunar = LunisolarConverter.solarToLunar(date);
                               bool isCurrentMonth = dayData['isCurrentMonth'];
                               bool isToday = dayData['isToday'];
+                              final textColor = isCurrentMonth
+                                  ? (isToday
+                                      ? Colors.white
+                                      : (index % 7 == 6 ? Colors.red.shade300 : Colors.black))
+                                  : Colors.grey;
+
                               return Container(
                                 alignment: Alignment.center,
                                 margin: EdgeInsets.all(1),
@@ -108,14 +119,24 @@ class EventTabScreen extends StatelessWidget {
                                   color: isToday ? Colors.blue : Colors.transparent,
                                   borderRadius: BorderRadius.circular(4),
                                 ),
-                                child: Text(
-                                  '$day',
-                                  style: TextStyle(
-                                    color: isCurrentMonth
-                                        ? (isToday ? Colors.white : (index % 7 == 6 ? Colors.red.shade300 : Colors.black))
-                                        : Colors.grey,
-                                    fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
-                                  ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      '${date.day}',
+                                      style: TextStyle(
+                                        color: textColor,
+                                        fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
+                                      ),
+                                    ),
+                                    Text(
+                                      '${lunar.day}${lunar.day == 1 ? '/${lunar.month}' : ''}',
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        color: isToday ? Colors.white : Colors.grey.shade700,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               );
                             },
