@@ -51,22 +51,26 @@ class SessionSettings {
   final bool pushEnabled;
   final bool emailDigest;
   final bool darkMode;
+  final String languageCode;
 
   const SessionSettings({
     this.pushEnabled = true,
     this.emailDigest = false,
     this.darkMode = false,
+    this.languageCode = 'vi',
   });
 
   SessionSettings copyWith({
     bool? pushEnabled,
     bool? emailDigest,
     bool? darkMode,
+    String? languageCode,
   }) {
     return SessionSettings(
       pushEnabled: pushEnabled ?? this.pushEnabled,
       emailDigest: emailDigest ?? this.emailDigest,
       darkMode: darkMode ?? this.darkMode,
+      languageCode: languageCode ?? this.languageCode,
     );
   }
 
@@ -74,6 +78,7 @@ class SessionSettings {
     'pushEnabled': pushEnabled,
     'emailDigest': emailDigest,
     'darkMode': darkMode,
+    'languageCode': languageCode,
   };
 
   factory SessionSettings.fromJson(Map<String, dynamic> json) {
@@ -81,6 +86,7 @@ class SessionSettings {
       pushEnabled: json['pushEnabled'] as bool? ?? true,
       emailDigest: json['emailDigest'] as bool? ?? false,
       darkMode: json['darkMode'] as bool? ?? false,
+      languageCode: json['languageCode'] as String? ?? 'vi',
     );
   }
 }
@@ -120,11 +126,13 @@ class SessionController extends GetxController {
     bool? pushEnabled,
     bool? emailDigest,
     bool? darkMode,
+    String? languageCode,
   }) async {
     final updated = settings.value.copyWith(
       pushEnabled: pushEnabled,
       emailDigest: emailDigest,
       darkMode: darkMode,
+      languageCode: languageCode,
     );
     settings.value = updated;
     await _save();

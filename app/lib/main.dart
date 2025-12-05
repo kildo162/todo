@@ -1,10 +1,16 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:app/login/login_screen.dart';
 import 'package:app/home/base_screen.dart';
+import 'package:app/shared/local_notification_service.dart';
 
-void main() {
-  runApp(MyApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  if (!kIsWeb) {
+    await LocalNotificationService.instance.init();
+  }
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {

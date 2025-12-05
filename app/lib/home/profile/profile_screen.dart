@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'package:app/shared/session.dart';
+import 'package:app/home/profile/personal_info_screen.dart';
+import 'package:app/home/profile/language_screen.dart';
 import 'profile_controller.dart';
 
 class ProfileTabScreen extends StatefulWidget {
@@ -15,6 +17,7 @@ class _ProfileTabScreenState extends State<ProfileTabScreen> {
   final ProfileController controller = Get.isRegistered<ProfileController>()
       ? Get.find<ProfileController>()
       : Get.put(ProfileController());
+  final GlobalKey _notificationSettingsKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -72,12 +75,12 @@ class _ProfileTabScreenState extends State<ProfileTabScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.edit, color: Colors.white),
-            onPressed: () {},
+            onPressed: () => Get.to(() => const PersonalInfoScreen()),
             tooltip: 'Chỉnh sửa',
           ),
           IconButton(
             icon: const Icon(Icons.settings_outlined, color: Colors.white),
-            onPressed: () {},
+            onPressed: () => Get.to(() => LanguageScreen()),
             tooltip: 'Cài đặt',
           ),
           const SizedBox(width: 6),
@@ -207,30 +210,35 @@ class _ProfileTabScreenState extends State<ProfileTabScreen> {
               );
             }),
             const SizedBox(height: 16),
-            Row(
-              children: [
-                _StatCard(
-                  title: 'Sự kiện đã tạo',
-                  value: '12',
-                  icon: Icons.edit_calendar,
-                  color: Colors.blue,
-                ),
-                const SizedBox(width: 12),
-                _StatCard(
-                  title: 'Đã tham gia',
-                  value: '27',
-                  icon: Icons.group,
-                  color: Colors.green,
-                ),
-                const SizedBox(width: 12),
-                _StatCard(
-                  title: 'Thông báo mới',
-                  value: '5',
-                  icon: Icons.notifications,
-                  color: Colors.orange,
-                ),
-              ],
-            ),
+            Obx(() {
+              final created = controller.createdEvents;
+              final participated = controller.participatedEvents;
+              final unread = controller.unreadNotifications;
+              return Row(
+                children: [
+                  _StatCard(
+                    title: 'Sự kiện đã tạo',
+                    value: '$created',
+                    icon: Icons.edit_calendar,
+                    color: Colors.blue,
+                  ),
+                  const SizedBox(width: 12),
+                  _StatCard(
+                    title: 'Đã tham gia',
+                    value: '$participated',
+                    icon: Icons.group,
+                    color: Colors.green,
+                  ),
+                  const SizedBox(width: 12),
+                  _StatCard(
+                    title: 'Thông báo mới',
+                    value: '$unread',
+                    icon: Icons.notifications,
+                    color: Colors.orange,
+                  ),
+                ],
+              );
+            }),
             const SizedBox(height: 18),
             const Text(
               'Danh mục',
@@ -245,17 +253,22 @@ class _ProfileTabScreenState extends State<ProfileTabScreen> {
                   icon: Icons.person,
                   title: 'Thông tin cá nhân',
                   subtitle: 'Họ tên, liên hệ',
+                  onTap: () => Get.to(() => const PersonalInfoScreen()),
                 ),
                 _ShortcutTile(
                   icon: Icons.notifications_active,
                   title: 'Thông báo',
                   subtitle: 'Tùy chỉnh nhận tin',
+                  onTap: _scrollToNotificationSettings,
                 ),
-                _ShortcutTile(
-                  icon: Icons.language,
-                  title: 'Ngôn ngữ',
-                  subtitle: 'Vietnamese',
-                ),
+                Obx(() {
+                  return _ShortcutTile(
+                    icon: Icons.language,
+                    title: 'Ngôn ngữ',
+                    subtitle: controller.languageLabel(controller.settings.languageCode),
+                    onTap: () => Get.to(() => LanguageScreen()),
+                  );
+                }),
                 _ShortcutTile(
                   icon: Icons.lock,
                   title: 'Bảo mật',
@@ -277,6 +290,7 @@ class _ProfileTabScreenState extends State<ProfileTabScreen> {
             ),
             const SizedBox(height: 18),
             Container(
+              key: _notificationSettingsKey,
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -293,7 +307,7 @@ class _ProfileTabScreenState extends State<ProfileTabScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'Tùy chọn',
+                    'Cài đặt thông báo',
                     style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
                   ),
                   const SizedBox(height: 10),
@@ -314,14 +328,61 @@ class _ProfileTabScreenState extends State<ProfileTabScreen> {
                           value: settings.emailDigest,
                           onChanged: controller.toggleEmailDigest,
                         ),
-                        const Divider(height: 20),
-                        _ToggleRow(
-                          title: 'Chế độ ban đêm',
-                          subtitle: 'Giảm độ chói màn hình',
-                          value: settings.darkMode,
-                          onChanged: controller.toggleDarkMode,
-                        ),
                       ],
+                    );
+                  }),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton.icon(
+                      onPressed: () => controller.sendTestNotification(),
+                      icon: const Icon(
+                        Icons.notifications_active_outlined,
+                        size: 18,
+                      ),
+                      label: const Text('Gửi thông báo thử'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.blue.shade700,
+                        side: BorderSide(color: Colors.blue.shade200),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.04),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Tùy chọn khác',
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+                  ),
+                  const SizedBox(height: 10),
+                  Obx(() {
+                    final settings = controller.settings;
+                    return _ToggleRow(
+                      title: 'Chế độ ban đêm',
+                      subtitle: 'Giảm độ chói màn hình',
+                      value: settings.darkMode,
+                      onChanged: controller.toggleDarkMode,
                     );
                   }),
                 ],
@@ -400,6 +461,17 @@ class _ProfileTabScreenState extends State<ProfileTabScreen> {
         ),
       ),
     );
+  }
+
+  void _scrollToNotificationSettings() {
+    final ctx = _notificationSettingsKey.currentContext;
+    if (ctx != null) {
+      Scrollable.ensureVisible(
+        ctx,
+        duration: const Duration(milliseconds: 380),
+        curve: Curves.easeInOut,
+      );
+    }
   }
 
   Future<void> _confirmLogout() async {

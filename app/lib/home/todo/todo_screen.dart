@@ -82,8 +82,8 @@ class TodoScreen extends StatelessWidget {
             SliverPersistentHeader(
               pinned: true,
               delegate: _FilterHeaderDelegate(
-                minHeight: 78,
-                maxHeight: 78,
+                minHeight: 72,
+                maxHeight: 72,
                 child: _buildFilterBar(total: total, active: active, done: done, overdue: overdue),
               ),
             ),

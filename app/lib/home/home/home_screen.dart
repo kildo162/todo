@@ -5,6 +5,7 @@ import 'package:app/home/event/event_list_screen.dart';
 import 'package:app/home/home/quick_action_management_screen.dart';
 import 'package:app/home/note/note_screen.dart';
 import 'package:app/home/notification/notification_screen.dart';
+import 'package:app/home/profile/language_screen.dart';
 import 'package:app/home/todo/todo_screen.dart';
 import 'package:app/utils/toast_utils.dart';
 import 'package:flutter/material.dart';
@@ -45,7 +46,7 @@ class HomeTabScreen extends StatelessWidget {
         Get.to(() => TodoScreen());
         break;
       case 'settings':
-        ToastUtils.showToast('Mở cài đặt (mock)', backgroundColor: Colors.blue);
+        Get.to(() => LanguageScreen());
         break;
       case 'manage':
         Get.to(() => QuickActionManagementScreen());
@@ -245,7 +246,16 @@ class HomeTabScreen extends StatelessWidget {
                                 ),
                               ),
                               const SizedBox(height: 6),
-                              Text(item.label, style: TextStyle(fontSize: 12, color: Colors.grey.shade800)),
+                              SizedBox(
+                                height: 30,
+                                child: Text(
+                                  item.label,
+                                  textAlign: TextAlign.center,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(fontSize: 12, color: Colors.grey.shade800, height: 1.2),
+                                ),
+                              ),
                             ],
                           ),
                         ),
