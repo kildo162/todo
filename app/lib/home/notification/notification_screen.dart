@@ -10,6 +10,15 @@ class NotificationTabScreen extends StatelessWidget {
   final NotificationController controller =
       Get.isRegistered<NotificationController>() ? Get.find<NotificationController>() : Get.put(NotificationController());
 
+  Widget _svg(String path, {double size = 20, Color? color}) {
+    return SvgPicture.asset(
+      path,
+      height: size,
+      width: size,
+      colorFilter: color != null ? ColorFilter.mode(color, BlendMode.srcIn) : null,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,7 +42,7 @@ class NotificationTabScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(color: Colors.white.withOpacity(0.18), shape: BoxShape.circle),
-              child: const Icon(Icons.notifications_active, color: Colors.white),
+              child: _svg('assets/icons/outline/bell.svg', size: 18, color: Colors.white),
             ),
             const SizedBox(width: 12),
             Column(
@@ -52,7 +61,7 @@ class NotificationTabScreen extends StatelessWidget {
             tooltip: 'Đánh dấu đã đọc',
           ),
           IconButton(
-            icon: const Icon(Icons.settings_outlined, color: Colors.white),
+            icon: _svg('assets/icons/outline/cog-6-tooth.svg', size: 20, color: Colors.white),
             onPressed: () {},
             tooltip: 'Cài đặt',
           ),
@@ -174,6 +183,14 @@ class _NotificationTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final isRead = item.read;
     final timeString = formatTime(item.time);
+    Widget svg(String path, {double size = 20, Color? color}) {
+      return SvgPicture.asset(
+        path,
+        height: size,
+        width: size,
+        colorFilter: color != null ? ColorFilter.mode(color, BlendMode.srcIn) : null,
+      );
+    }
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -186,20 +203,19 @@ class _NotificationTile extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 46,
-            height: 46,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: isRead ? Colors.grey.shade200 : Colors.blue.shade50,
+          children: [
+            Container(
+              width: 46,
+              height: 46,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: isRead ? Colors.grey.shade200 : Colors.blue.shade50,
+              ),
+              child: Center(
+                child: svg('assets/icons/solid/bell.svg', size: 20, color: isRead ? Colors.grey.shade600 : Colors.blue.shade500),
+              ),
             ),
-            child: Icon(
-              Icons.notifications,
-              color: isRead ? Colors.grey.shade600 : Colors.blue.shade500,
-            ),
-          ),
-          const SizedBox(width: 12),
+            const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -242,7 +258,11 @@ class _NotificationTile extends StatelessWidget {
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    Icon(isRead ? Icons.check_circle : Icons.brightness_1, size: 14, color: isRead ? Colors.grey.shade400 : Colors.blue.shade400),
+                    svg(
+                      isRead ? 'assets/icons/outline/check-circle.svg' : 'assets/icons/solid/check-circle.svg',
+                      size: 14,
+                      color: isRead ? Colors.grey.shade400 : Colors.blue.shade400,
+                    ),
                     const SizedBox(width: 6),
                     Text(
                       isRead ? 'Đã đọc' : 'Chưa đọc',

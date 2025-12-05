@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:app/login/login_controller.dart';
+import 'package:app/login/forgot_password_screen.dart';
+import 'package:app/login/sign_up_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   final LoginController controller = Get.put(LoginController());
@@ -63,24 +65,33 @@ class LoginScreen extends StatelessWidget {
                   obscureText: true,
                 ),
                 SizedBox(height: 24),
-                SizedBox(
-                  width: double.infinity,
-                  height: 48,
-                  child: ElevatedButton(
-                    onPressed: controller.login,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+                Obx(() {
+                  final isLoading = controller.isLoading.value;
+                  return SizedBox(
+                    width: double.infinity,
+                    height: 48,
+                    child: ElevatedButton(
+                      onPressed: isLoading ? null : controller.login,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        elevation: 0,
                       ),
-                      elevation: 0,
+                      child: isLoading
+                          ? SizedBox(
+                              width: 22,
+                              height: 22,
+                              child: const CircularProgressIndicator(strokeWidth: 2.4, color: Colors.white),
+                            )
+                          : Text(
+                              'Login',
+                              style: TextStyle(fontSize: 18, color: Colors.white),
+                            ),
                     ),
-                    child: Text(
-                      'Login',
-                      style: TextStyle(fontSize: 18, color: Colors.white),
-                    ),
-                  ),
-                ),
+                  );
+                }),
                 SizedBox(height: 16),
                 Wrap(
                   alignment: WrapAlignment.center,
@@ -88,11 +99,11 @@ class LoginScreen extends StatelessWidget {
                   runSpacing: 4,
                   children: [
                     TextButton(
-                      onPressed: () {},
+                      onPressed: () => Get.to(() => ForgotPasswordScreen()),
                       child: Text('Forgot Password?', style: TextStyle(color: Colors.blue)),
                     ),
                     TextButton(
-                      onPressed: () {},
+                      onPressed: () => Get.to(() => SignUpScreen()),
                       child: Text("Don't have an account? Sign Up", style: TextStyle(color: Colors.blue)),
                     ),
                   ],

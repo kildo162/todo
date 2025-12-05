@@ -3,15 +3,30 @@ import 'package:get/get.dart';
 import 'package:app/utils/toast_utils.dart';
 
 class LoginController extends GetxController {
-  var email = 'admin'.obs;
-  var password = 'admin'.obs;
+  var email = ''.obs;
+  var password = ''.obs;
+  var isLoading = false.obs;
 
-  void login() {
-    if (email.value == 'admin' && password.value == 'admin') {
-      ToastUtils.showToast('Logged in successfully', backgroundColor: Colors.green);
+  Future<void> login() async {
+    if (isLoading.value) return;
+
+    final emailValue = email.value.trim();
+    final passwordValue = password.value.trim();
+
+    if (emailValue.isEmpty || passwordValue.isEmpty) {
+      ToastUtils.showToast('Vui lòng nhập đầy đủ thông tin', backgroundColor: Colors.orange);
+      return;
+    }
+
+    isLoading.value = true;
+    await Future.delayed(const Duration(milliseconds: 900)); // Mock request
+
+    if (emailValue == 'admin' && passwordValue == 'admin') {
+      ToastUtils.showToast('Đăng nhập thành công', backgroundColor: Colors.green);
       Get.offAllNamed('/home');
     } else {
-      ToastUtils.showToast('Invalid credentials', backgroundColor: Colors.red);
+      ToastUtils.showToast('Thông tin đăng nhập chưa chính xác (mock)', backgroundColor: Colors.red);
     }
+    isLoading.value = false;
   }
 }

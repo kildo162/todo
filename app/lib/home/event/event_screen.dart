@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:app/utils/lunisolar_calendar.dart';
 import 'package:get/get.dart';
 import 'event_controller.dart';
@@ -9,6 +10,15 @@ class EventTabScreen extends StatelessWidget {
   EventTabScreen({super.key});
 
   final controller = Get.put(EventController(), permanent: true);
+
+  Widget _svg(String path, {double size = 20, Color? color}) {
+    return SvgPicture.asset(
+      path,
+      height: size,
+      width: size,
+      colorFilter: color != null ? ColorFilter.mode(color, BlendMode.srcIn) : null,
+    );
+  }
 
   bool _isSameDate(DateTime a, DateTime b) {
     return a.year == b.year && a.month == b.month && a.day == b.day;
@@ -38,6 +48,63 @@ class EventTabScreen extends StatelessWidget {
     return calendarDays;
   }
 
+  String _filterLabel(EventFilter filter) {
+    switch (filter) {
+      case EventFilter.all:
+        return 'Tất cả';
+      case EventFilter.upcoming:
+        return 'Sắp tới';
+      case EventFilter.past:
+        return 'Đã qua';
+      case EventFilter.thisMonth:
+        return 'Trong tháng';
+    }
+  }
+
+  void _openFilterSheet(EventController ctrl) {
+    final options = [
+      {'label': 'Tất cả', 'desc': 'Hiển thị mọi sự kiện', 'value': EventFilter.all},
+      {'label': 'Sắp tới', 'desc': 'Từ hôm nay trở đi', 'value': EventFilter.upcoming},
+      {'label': 'Đã qua', 'desc': 'Các sự kiện trong quá khứ', 'value': EventFilter.past},
+      {'label': 'Trong tháng', 'desc': 'Theo tháng đang xem', 'value': EventFilter.thisMonth},
+    ];
+
+    showModalBottomSheet(
+      context: Get.context!,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
+      builder: (_) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 8),
+              Container(width: 42, height: 4, decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(12))),
+              const SizedBox(height: 12),
+              const Text('Lọc sự kiện', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+              const SizedBox(height: 8),
+              ...options.map(
+                (item) => Obx(() {
+                  final value = item['value'] as EventFilter;
+                  final selected = ctrl.filter.value == value;
+                  return ListTile(
+                    leading: Icon(selected ? Icons.radio_button_checked : Icons.radio_button_unchecked, color: selected ? Colors.blue : Colors.grey),
+                    title: Text(item['label'] as String),
+                    subtitle: Text(item['desc'] as String),
+                    onTap: () {
+                      ctrl.setFilter(value);
+                      Get.back();
+                    },
+                  );
+                }),
+              ),
+              const SizedBox(height: 6),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final now = DateTime.now();
@@ -65,7 +132,7 @@ class EventTabScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(color: Colors.white.withOpacity(0.18), shape: BoxShape.circle),
-              child: const Icon(Icons.event_note, color: Colors.white),
+              child: _svg('assets/icons/outline/calendar.svg', size: 18, color: Colors.white),
             ),
             const SizedBox(width: 12),
             Column(
@@ -82,18 +149,18 @@ class EventTabScreen extends StatelessWidget {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.today, color: Colors.white),
+            icon: _svg('assets/icons/outline/calendar-date-range.svg', size: 20, color: Colors.white),
             onPressed: controller.goToCurrentMonth,
             tooltip: 'Về hôm nay',
           ),
           IconButton(
-            icon: const Icon(Icons.list_alt_outlined, color: Colors.white),
+            icon: _svg('assets/icons/outline/queue-list.svg', size: 20, color: Colors.white),
             onPressed: () => Get.to(() => EventListScreen()),
             tooltip: 'Danh sách sự kiện',
           ),
           IconButton(
-            icon: const Icon(Icons.filter_alt_outlined, color: Colors.white),
-            onPressed: () {},
+            icon: _svg('assets/icons/outline/adjustments-horizontal.svg', size: 20, color: Colors.white),
+            onPressed: () => _openFilterSheet(controller),
             tooltip: 'Lọc',
           ),
           const SizedBox(width: 6),
@@ -176,7 +243,7 @@ class EventTabScreen extends StatelessWidget {
                     shadowColor: Colors.black12,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                     child: Padding(
-                      padding: const EdgeInsets.fromLTRB(14, 14, 14, 10),
+                      padding: const EdgeInsets.fromLTRB(12, 12, 12, 10),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -209,7 +276,7 @@ class EventTabScreen extends StatelessWidget {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 6),
+                          const SizedBox(height: 4),
                           Row(
                             children: weekdayLabels
                                 .map(
@@ -227,13 +294,14 @@ class EventTabScreen extends StatelessWidget {
                                 )
                                 .toList(),
                           ),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: 6),
                         LayoutBuilder(
                           builder: (context, constraints) {
+                            const spacing = 4.0;
+                            const aspectRatio = 0.82; // taller tiles to avoid overflow
                             final rows = (calendarDays.length / 7).ceil();
-                            const spacing = 6.0;
                             final tileWidth = (constraints.maxWidth - spacing * 6) / 7;
-                            final tileHeight = tileWidth * 1.05;
+                            final tileHeight = tileWidth / aspectRatio;
                             final totalHeight = rows * tileHeight + (rows - 1) * spacing;
 
                             return SizedBox(
@@ -243,7 +311,7 @@ class EventTabScreen extends StatelessWidget {
                                 padding: EdgeInsets.zero,
                                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount: 7,
-                                  childAspectRatio: 1.05,
+                                  childAspectRatio: aspectRatio,
                                   crossAxisSpacing: spacing,
                                   mainAxisSpacing: spacing,
                                 ),
@@ -286,14 +354,14 @@ class EventTabScreen extends StatelessWidget {
                                                       : Colors.grey.shade200,
                                         ),
                                       ),
-                                      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+                                      padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 2),
                                       child: Column(
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
                                           Text(
                                             '${date.day}',
                                             style: TextStyle(
-                                              fontSize: 16,
+                                              fontSize: 15,
                                               fontWeight: FontWeight.w700,
                                               color: dayColor,
                                             ),
@@ -302,12 +370,12 @@ class EventTabScreen extends StatelessWidget {
                                           Text(
                                             '${lunar.day}${lunar.day == 1 ? '/${lunar.month}' : ''}',
                                             style: TextStyle(
-                                              fontSize: 11,
+                                              fontSize: 10,
                                               color: isLunarHighlight && !isToday ? Colors.red.shade500 : lunarColor,
                                               fontWeight: isLunarHighlight ? FontWeight.w700 : FontWeight.w500,
                                             ),
                                           ),
-                                          const SizedBox(height: 4),
+                                          const SizedBox(height: 3),
                                           if (hasEvent)
                                             Container(
                                               width: 8,
@@ -351,12 +419,19 @@ class EventTabScreen extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
             sliver: GetX<EventController>(
               builder: (ctrl) {
-                final upcoming = ctrl.upcomingEvents;
-                if (upcoming.isEmpty) {
-                  return const SliverToBoxAdapter(
+                final filtered = ctrl.filteredEvents;
+                final label = _filterLabel(ctrl.filter.value);
+                if (filtered.isEmpty) {
+                  return SliverToBoxAdapter(
                     child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 36),
-                      child: _EmptyEventState(),
+                      padding: const EdgeInsets.symmetric(vertical: 36),
+                      child: Column(
+                        children: [
+                          const _EmptyEventState(),
+                          const SizedBox(height: 12),
+                          Text('Không có sự kiện "$label"', style: TextStyle(color: Colors.grey.shade600)),
+                        ],
+                      ),
                     ),
                   );
                 }
@@ -364,14 +439,36 @@ class EventTabScreen extends StatelessWidget {
                 return SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {
-                      final event = upcoming[index];
+                      if (index == 0) {
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                decoration: BoxDecoration(
+                                  color: Colors.blue.shade50,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Text('Bộ lọc: $label', style: TextStyle(color: Colors.blue.shade700, fontWeight: FontWeight.w700)),
+                              ),
+                              const Spacer(),
+                              TextButton(
+                                onPressed: () => _openFilterSheet(ctrl),
+                                child: const Text('Đổi lọc'),
+                              )
+                            ],
+                          ),
+                        );
+                      }
+                      final event = filtered[index - 1];
                       final lunar = LunisolarConverter.solarToLunar(event.date);
                       return InkWell(
                         onTap: () => Get.to(() => EventDayDetailScreen(date: event.date)),
                         child: _EventCard(event: event, lunar: lunar),
                       );
                     },
-                    childCount: upcoming.length,
+                    childCount: filtered.length + 1,
                   ),
                 );
               },

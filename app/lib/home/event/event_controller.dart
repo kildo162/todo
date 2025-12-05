@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+enum EventFilter { all, upcoming, past, thisMonth }
+
 class Event {
   final String title;
   final DateTime date;
@@ -26,6 +28,7 @@ class EventController extends GetxController {
   static const String _storageKey = 'events_storage';
   var events = <Event>[].obs;
   final focusedMonth = DateTime.now().obs;
+  final filter = EventFilter.upcoming.obs;
 
   @override
   void onInit() {
@@ -43,6 +46,10 @@ class EventController extends GetxController {
     focusedMonth.value = DateTime(now.year, now.month);
   }
 
+  void setFilter(EventFilter value) {
+    filter.value = value;
+  }
+
   List<Event> get upcomingEvents {
     final today = DateTime.now();
     final start = DateTime(today.year, today.month, today.day);
@@ -57,6 +64,25 @@ class EventController extends GetxController {
     final list = events.where((e) => e.date.isBefore(start)).toList()
       ..sort((a, b) => b.date.compareTo(a.date));
     return list;
+  }
+
+  List<Event> get filteredEvents {
+    final sorted = [...events]..sort((a, b) => a.date.compareTo(b.date));
+    final today = DateTime.now();
+    final start = DateTime(today.year, today.month, today.day);
+
+    switch (filter.value) {
+      case EventFilter.all:
+        return sorted;
+      case EventFilter.upcoming:
+        return sorted.where((e) => !e.date.isBefore(start)).toList();
+      case EventFilter.past:
+        final past = sorted.where((e) => e.date.isBefore(start)).toList();
+        return past.reversed.toList();
+      case EventFilter.thisMonth:
+        final current = focusedMonth.value;
+        return sorted.where((e) => e.date.year == current.year && e.date.month == current.month).toList();
+    }
   }
 
   Future<void> addEvent(Event event) async {

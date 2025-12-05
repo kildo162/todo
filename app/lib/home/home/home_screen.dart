@@ -2,7 +2,11 @@ import 'package:app/home/home/home_controller.dart';
 import 'package:app/utils/lunisolar_calendar.dart';
 import 'package:app/home/event/event_detail_screen.dart';
 import 'package:app/home/event/event_list_screen.dart';
+import 'package:app/home/home/quick_action_management_screen.dart';
+import 'package:app/home/notification/notification_screen.dart';
+import 'package:app/utils/toast_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 class HomeTabScreen extends StatelessWidget {
@@ -10,9 +14,40 @@ class HomeTabScreen extends StatelessWidget {
 
   final HomeController controller = Get.put(HomeController());
 
+  Widget _svg(String path, {double size = 22, Color? color}) {
+    return SvgPicture.asset(
+      path,
+      height: size,
+      width: size,
+      colorFilter: color != null ? ColorFilter.mode(color, BlendMode.srcIn) : null,
+    );
+  }
+
   List<DateTime> _buildWeekDays(DateTime anchor) {
     final start = anchor.subtract(Duration(days: anchor.weekday - 1)); // Monday start
     return List.generate(7, (i) => start.add(Duration(days: i)));
+  }
+
+  void _handleAction(QuickAction action) {
+    switch (action.id) {
+      case 'event':
+        Get.to(() => EventListScreen());
+        break;
+      case 'notification':
+        Get.to(() => NotificationTabScreen());
+        break;
+      case 'note':
+        ToastUtils.showToast('Ghi chú đang được mô phỏng', backgroundColor: Colors.orange);
+        break;
+      case 'settings':
+        ToastUtils.showToast('Mở cài đặt (mock)', backgroundColor: Colors.blue);
+        break;
+      case 'manage':
+        Get.to(() => QuickActionManagementScreen());
+        break;
+      default:
+        ToastUtils.showToast('Tính năng đang phát triển', backgroundColor: Colors.grey.shade700);
+    }
   }
 
   @override
@@ -20,13 +55,6 @@ class HomeTabScreen extends StatelessWidget {
     final now = DateTime.now();
     final lunarNow = LunisolarConverter.solarToLunar(now);
     final weekDays = _buildWeekDays(now);
-
-    final quickActions = [
-      {'icon': Icons.event_available, 'label': 'Sự kiện'},
-      {'icon': Icons.notifications_active, 'label': 'Thông báo'},
-      {'icon': Icons.check_circle, 'label': 'Ghi chú'},
-      {'icon': Icons.settings, 'label': 'Cài đặt'},
-    ];
 
     final upcoming = [
       {'title': 'Họp dự án', 'time': '09:30', 'place': 'Phòng Zoom', 'tag': 'Quan trọng', 'color': Colors.orange},
@@ -63,7 +91,7 @@ class HomeTabScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(color: Colors.white.withOpacity(0.18), shape: BoxShape.circle),
-              child: const Icon(Icons.home, color: Colors.white),
+              child: _svg('assets/icons/solid/home.svg', size: 18, color: Colors.white),
             ),
             const SizedBox(width: 12),
             Column(
@@ -161,38 +189,66 @@ class HomeTabScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            Text('Lối tắt', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.grey.shade900)),
-            const SizedBox(height: 10),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: quickActions
-                  .map(
-                    (item) => Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 6),
-                        child: Column(
-                          children: [
-                            Container(
-                              width: 56,
-                              height: 56,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
+              children: [
+                Text('Lối tắt', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.grey.shade900)),
+                const Spacer(),
+                TextButton(onPressed: () => Get.to(() => QuickActionManagementScreen()), child: const Text('Quản lý')),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Obx(() {
+              final actions = controller.visibleActions;
+              if (actions.isEmpty) {
+                return Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(14),
+                    boxShadow: [
+                      BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 10, offset: const Offset(0, 4)),
+                    ],
+                  ),
+                  child: Text('Tất cả lối tắt đã tắt. Nhấn "Quản lý" để bật lại.', style: TextStyle(color: Colors.grey.shade700)),
+                );
+              }
+
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: actions
+                    .map(
+                      (item) => Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 6),
+                          child: Column(
+                            children: [
+                              InkWell(
                                 borderRadius: BorderRadius.circular(14),
-                                boxShadow: [
-                                  BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 10, offset: const Offset(0, 4)),
-                                ],
+                                onTap: () => _handleAction(item),
+                                child: Container(
+                                  width: 56,
+                                  height: 56,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(14),
+                                    boxShadow: [
+                                      BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 10, offset: const Offset(0, 4)),
+                                    ],
+                                  ),
+                                  child: Center(child: _svg(item.icon, size: 24, color: Colors.blue.shade600)),
+                                ),
                               ),
-                              child: Icon(item['icon'] as IconData, color: Colors.blue.shade600),
-                            ),
-                            const SizedBox(height: 6),
-                            Text(item['label'] as String, style: TextStyle(fontSize: 12, color: Colors.grey.shade800)),
-                          ],
+                              const SizedBox(height: 6),
+                              Text(item.label, style: TextStyle(fontSize: 12, color: Colors.grey.shade800)),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  )
-                  .toList(),
-            ),
+                    )
+                    .toList(),
+              );
+            }),
             const SizedBox(height: 18),
             Container(
               padding: const EdgeInsets.all(14),
@@ -298,7 +354,7 @@ class HomeTabScreen extends StatelessWidget {
                               color: (e['color'] as Color).withOpacity(0.12),
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            child: Icon(Icons.event, color: e['color'] as Color),
+                            child: _svg('assets/icons/solid/calendar-days.svg', size: 20, color: e['color'] as Color),
                           ),
                           const SizedBox(width: 12),
                           Expanded(
@@ -309,11 +365,11 @@ class HomeTabScreen extends StatelessWidget {
                                 const SizedBox(height: 4),
                                 Row(
                                   children: [
-                                    Icon(Icons.access_time, size: 14, color: Colors.grey.shade600),
+                                    _svg('assets/icons/outline/clock.svg', size: 14, color: Colors.grey.shade600),
                                     const SizedBox(width: 4),
                                     Text(e['time'] as String, style: TextStyle(fontSize: 12, color: Colors.grey.shade700)),
                                     const SizedBox(width: 10),
-                                    Icon(Icons.place, size: 14, color: Colors.grey.shade600),
+                                    _svg('assets/icons/outline/map-pin.svg', size: 14, color: Colors.grey.shade600),
                                     const SizedBox(width: 4),
                                     Text(e['place'] as String, style: TextStyle(fontSize: 12, color: Colors.grey.shade700)),
                                   ],
