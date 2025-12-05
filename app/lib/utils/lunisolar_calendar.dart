@@ -14,8 +14,28 @@ class LunarDate {
   });
 }
 
+class CanChiInfo {
+  final String dayCan;
+  final String dayChi;
+  final String monthCan;
+  final String monthChi;
+  final String yearCan;
+  final String yearChi;
+
+  const CanChiInfo({
+    required this.dayCan,
+    required this.dayChi,
+    required this.monthCan,
+    required this.monthChi,
+    required this.yearCan,
+    required this.yearChi,
+  });
+}
+
 class LunisolarConverter {
   static const int _timeZone = 7;
+  static const List<String> _can = ['Giáp', 'Ất', 'Bính', 'Đinh', 'Mậu', 'Kỷ', 'Canh', 'Tân', 'Nhâm', 'Quý'];
+  static const List<String> _chi = ['Tý', 'Sửu', 'Dần', 'Mão', 'Thìn', 'Tỵ', 'Ngọ', 'Mùi', 'Thân', 'Dậu', 'Tuất', 'Hợi'];
 
   static LunarDate solarToLunar(DateTime date) {
     final julianDay = _jdFromDate(date.day, date.month, date.year);
@@ -137,7 +157,7 @@ class LunisolarConverter {
     final int off = _jdFromDate(31, 12, yy) - 2415021;
     final int k = (off / 29.530588853).floor();
     int nm = _getNewMoonDay(k, timeZone);
-    final int sunLong = _getSunLongitude(nm, timeZone);
+    final int sunLong = _getSunLongitude(nm.toDouble(), timeZone);
     if (sunLong >= 9) {
       nm = _getNewMoonDay(k - 1, timeZone);
     }
@@ -148,11 +168,11 @@ class LunisolarConverter {
     final int k = ((a11 - 2415021.076998695) / 29.530588853 + 0.5).floor();
     int last = 0;
     int i = 1;
-    int arc = _getSunLongitude(_getNewMoonDay(k + i, timeZone), timeZone);
+    int arc = _getSunLongitude(_getNewMoonDay(k + i, timeZone).toDouble(), timeZone);
     do {
       last = arc;
       i++;
-      arc = _getSunLongitude(_getNewMoonDay(k + i, timeZone), timeZone);
+      arc = _getSunLongitude(_getNewMoonDay(k + i, timeZone).toDouble(), timeZone);
     } while (arc != last && i < 14);
     return i - 1;
   }
@@ -176,5 +196,29 @@ class LunisolarConverter {
     final int k = ((a11 - 2415021.076998695) / 29.530588853 + 0.5).floor();
     final int monthStart = _getNewMoonDay(k + off, _timeZone);
     return _jdToDate(monthStart + lunarDate.day - 1);
+  }
+
+  static CanChiInfo canChi(DateTime date) {
+    final lunar = solarToLunar(date);
+    final int jd = _jdFromDate(date.day, date.month, date.year);
+
+    final int canYearIdx = (lunar.year + 6) % 10;
+    final int chiYearIdx = (lunar.year + 8) % 12;
+
+    final int monthBase = ((canYearIdx % 5) * 2 + 2) % 10;
+    final int canMonthIdx = (monthBase + lunar.month - 1) % 10;
+    final int chiMonthIdx = (lunar.month + 1) % 12;
+
+    final int canDayIdx = (jd + 9) % 10;
+    final int chiDayIdx = (jd + 1) % 12;
+
+    return CanChiInfo(
+      dayCan: _can[canDayIdx],
+      dayChi: _chi[chiDayIdx],
+      monthCan: _can[canMonthIdx],
+      monthChi: _chi[chiMonthIdx],
+      yearCan: _can[canYearIdx],
+      yearChi: _chi[chiYearIdx],
+    );
   }
 }

@@ -7,6 +7,7 @@ import 'package:app/home/home/home_screen.dart';
 import 'package:app/home/event/event_screen.dart';
 import 'package:app/home/notification/notification_screen.dart';
 import 'package:app/home/profile/profile_screen.dart';
+import 'package:app/home/event/event_detail_screen.dart';
 
 class BaseScreen extends StatefulWidget {
   const BaseScreen({super.key});
@@ -78,19 +79,7 @@ class _BaseScreenState extends State<BaseScreen> {
         child: RawMaterialButton(
           shape: CircleBorder(),
           onPressed: () {
-            showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                title: Text('Quick Action'),
-                content: Text('Add something quickly!'),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: Text('Close'),
-                  ),
-                ],
-              ),
-            );
+            Get.to(() => const EventCreateScreen());
           },
           elevation: 0,
           fillColor: Colors.transparent,
@@ -118,11 +107,11 @@ class _BaseScreenState extends State<BaseScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildTabItem(0, 'icons/outline/home.svg', 'icons/solid/home.svg', 'Home'),
-              _buildTabItem(1, 'icons/outline/calendar.svg', 'icons/solid/calendar.svg', 'Event'),
+              _buildTabItem(0, 'assets/icons/outline/home.svg', 'assets/icons/solid/home.svg', 'Home'),
+              _buildTabItem(1, 'assets/icons/outline/calendar.svg', 'assets/icons/solid/calendar.svg', 'Event'),
               SizedBox(width: 60), // Space for bigger FAB
-              _buildTabItem(2, 'icons/outline/bell.svg', 'icons/solid/bell.svg', 'Notification'),
-              _buildTabItem(3, 'icons/outline/user.svg', 'icons/solid/user.svg', 'Profile'),
+              _buildTabItem(2, 'assets/icons/outline/bell.svg', 'assets/icons/solid/bell.svg', 'Notification'),
+              _buildTabItem(3, 'assets/icons/outline/user.svg', 'assets/icons/solid/user.svg', 'Profile'),
             ],
           ),
         ),

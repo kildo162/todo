@@ -82,22 +82,18 @@ class LoginScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  spacing: 12,
+                  runSpacing: 4,
                   children: [
                     TextButton(
                       onPressed: () {},
-                      child: Text(
-                        'Forgot Password?',
-                        style: TextStyle(color: Colors.blue),
-                      ),
+                      child: Text('Forgot Password?', style: TextStyle(color: Colors.blue)),
                     ),
                     TextButton(
                       onPressed: () {},
-                      child: Text(
-                        "Don't have an account? Sign Up",
-                        style: TextStyle(color: Colors.blue),
-                      ),
+                      child: Text("Don't have an account? Sign Up", style: TextStyle(color: Colors.blue)),
                     ),
                   ],
                 ),

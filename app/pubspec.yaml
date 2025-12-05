@@ -56,3 +56,5 @@ flutter:
     - assets/fonts/
     - assets/images/
     - assets/icons/
+    - assets/icons/outline/
+    - assets/icons/solid/
