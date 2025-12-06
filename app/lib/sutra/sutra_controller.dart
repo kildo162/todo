@@ -30,13 +30,17 @@ class SutraController extends GetxController {
     _loadState();
   }
 
-  List<SutraItem> get chantingItems => items.where((e) => e.category == SutraCategory.chant).toList();
+  List<SutraItem> get chantingItems =>
+      items.where((e) => e.category == SutraCategory.chant).toList();
 
-  List<SutraItem> get scriptureItems => items.where((e) => e.category == SutraCategory.scripture).toList();
+  List<SutraItem> get scriptureItems =>
+      items.where((e) => e.category == SutraCategory.scripture).toList();
 
-  List<SutraItem> get lessonItems => items.where((e) => e.category == SutraCategory.lesson).toList();
+  List<SutraItem> get lessonItems =>
+      items.where((e) => e.category == SutraCategory.lesson).toList();
 
-  List<SutraItem> get favoriteItems => items.where((e) => favoriteIds.contains(e.id)).toList();
+  List<SutraItem> get favoriteItems =>
+      items.where((e) => favoriteIds.contains(e.id)).toList();
 
   int get totalChantCount => chantCounts.values.fold(0, (a, b) => a + b);
 
@@ -78,12 +82,16 @@ class SutraController extends GetxController {
         list.sort((a, b) {
           final lastA = _lastHistoryTime(a.id);
           final lastB = _lastHistoryTime(b.id);
-          return (lastB ?? DateTime.fromMillisecondsSinceEpoch(0))
-              .compareTo(lastA ?? DateTime.fromMillisecondsSinceEpoch(0));
+          return (lastB ?? DateTime.fromMillisecondsSinceEpoch(0)).compareTo(
+            lastA ?? DateTime.fromMillisecondsSinceEpoch(0),
+          );
         });
         break;
       case 'duration':
-        list.sort((a, b) => (a.durationMinutes ?? 999).compareTo(b.durationMinutes ?? 999));
+        list.sort(
+          (a, b) =>
+              (a.durationMinutes ?? 999).compareTo(b.durationMinutes ?? 999),
+        );
         break;
       case 'title':
         list.sort((a, b) => a.title.compareTo(b.title));
@@ -113,7 +121,8 @@ class SutraController extends GetxController {
 
   double chantProgress(String id) {
     final item = findById(id);
-    if (item == null || item.targetCount == null || item.targetCount == 0) return 0;
+    if (item == null || item.targetCount == null || item.targetCount == 0)
+      return 0;
     final value = chantCountFor(id) / item.targetCount!;
     return value.clamp(0, 1);
   }
@@ -152,7 +161,11 @@ class SutraController extends GetxController {
   }
 
   Future<void> logReading(String id, {int? durationMinutes}) async {
-    _addHistoryEntry(type: SutraActionType.read, itemId: id, durationMinutes: durationMinutes);
+    _addHistoryEntry(
+      type: SutraActionType.read,
+      itemId: id,
+      durationMinutes: durationMinutes,
+    );
     await _saveState();
   }
 
@@ -166,7 +179,9 @@ class SutraController extends GetxController {
     final rawChants = prefs.getString(_chantKey);
     if (rawChants != null && rawChants.isNotEmpty) {
       final decoded = jsonDecode(rawChants) as Map<String, dynamic>;
-      chantCounts.assignAll(decoded.map((key, value) => MapEntry(key, (value as num).toInt())));
+      chantCounts.assignAll(
+        decoded.map((key, value) => MapEntry(key, (value as num).toInt())),
+      );
     }
 
     final rawFavorites = prefs.getStringList(_favoriteKey);
@@ -182,7 +197,11 @@ class SutraController extends GetxController {
     final rawHistory = prefs.getString(_historyKey);
     if (rawHistory != null && rawHistory.isNotEmpty) {
       final decoded = jsonDecode(rawHistory) as List<dynamic>;
-      history.assignAll(decoded.map((e) => SutraHistoryEntry.fromJson(e as Map<String, dynamic>)).toList());
+      history.assignAll(
+        decoded
+            .map((e) => SutraHistoryEntry.fromJson(e as Map<String, dynamic>))
+            .toList(),
+      );
     }
   }
 
@@ -191,7 +210,10 @@ class SutraController extends GetxController {
     await prefs.setString(_chantKey, jsonEncode(chantCounts));
     await prefs.setStringList(_favoriteKey, favoriteIds.toList());
     await prefs.setStringList(_completedKey, completedIds.toList());
-    await prefs.setString(_historyKey, jsonEncode(history.map((e) => e.toJson()).toList()));
+    await prefs.setString(
+      _historyKey,
+      jsonEncode(history.map((e) => e.toJson()).toList()),
+    );
   }
 
   void _addHistoryEntry({
@@ -244,7 +266,8 @@ class SutraController extends GetxController {
         category: SutraCategory.chant,
         title: 'Chú Lăng Nghiêm',
         description: 'An trụ tâm, hộ trì đạo tràng, tăng trưởng định lực.',
-        content: 'Nam Mô Tát Đát Tha Tát Đa... (trì tụng nghiêm tĩnh, giữ giới thân khẩu ý).',
+        content:
+            'Nam Mô Tát Đát Tha Tát Đa... (trì tụng nghiêm tĩnh, giữ giới thân khẩu ý).',
         targetCount: 7,
         durationMinutes: 35,
         tags: ['Định lực', 'Buổi sáng'],
@@ -264,7 +287,8 @@ class SutraController extends GetxController {
         id: 'sam_hoi',
         category: SutraCategory.chant,
         title: 'Sám hối Hồng danh',
-        description: 'Lạy danh hiệu chư Phật, sám trừ nghiệp chướng, làm mới thân tâm.',
+        description:
+            'Lạy danh hiệu chư Phật, sám trừ nghiệp chướng, làm mới thân tâm.',
         content:
             'Danh hiệu 89 hoặc 108 vị Phật; phát lồ sám hối, phát nguyện tu tập thiện pháp, chuyển hóa nghiệp xấu.',
         targetCount: 3,
@@ -275,7 +299,8 @@ class SutraController extends GetxController {
         id: 'pho_mon',
         category: SutraCategory.scripture,
         title: 'Kinh Pháp Hoa - Phẩm Phổ Môn',
-        description: 'Quán Thế Âm lắng nghe tiếng khổ, nuôi dưỡng tâm từ bi cứu giúp.',
+        description:
+            'Quán Thế Âm lắng nghe tiếng khổ, nuôi dưỡng tâm từ bi cứu giúp.',
         content:
             'Nếu có chúng sinh chịu khổ não, một lòng xưng danh Bồ Tát Quán Thế Âm tức đặng giải thoát...',
         durationMinutes: 18,
@@ -285,7 +310,8 @@ class SutraController extends GetxController {
         id: 'kim_cang',
         category: SutraCategory.scripture,
         title: 'Kinh Kim Cang',
-        description: 'Quán chiếu vô ngã, phá chấp tướng để đạt trí tuệ Bát Nhã.',
+        description:
+            'Quán chiếu vô ngã, phá chấp tướng để đạt trí tuệ Bát Nhã.',
         content:
             'Phàm sở hữu tướng giai thị hư vọng, nhược kiến chư tướng phi tướng tức kiến Như Lai.',
         durationMinutes: 22,
@@ -305,7 +331,8 @@ class SutraController extends GetxController {
         id: 'dia_tang',
         category: SutraCategory.scripture,
         title: 'Kinh Địa Tạng',
-        description: 'Nương sức Đại nguyện Địa Tạng Bồ Tát, khởi tâm hiếu kính và cứu độ.',
+        description:
+            'Nương sức Đại nguyện Địa Tạng Bồ Tát, khởi tâm hiếu kính và cứu độ.',
         content:
             'Phát tâm hiếu thuận cha mẹ, hộ trì người mất, nguyện làm các thiện hạnh để giải trừ nghiệp chướng.',
         durationMinutes: 30,
@@ -325,7 +352,8 @@ class SutraController extends GetxController {
         id: 'phap_cu',
         category: SutraCategory.scripture,
         title: 'Kinh Pháp Cú',
-        description: 'Lời dạy tinh tuyển của Đức Phật về đạo đức, thiền định, trí tuệ.',
+        description:
+            'Lời dạy tinh tuyển của Đức Phật về đạo đức, thiền định, trí tuệ.',
         content:
             'Các kệ tụng ngắn gọn, soi sáng cách sống chánh niệm, buông bỏ tham sân si và nuôi dưỡng từ bi.',
         durationMinutes: 15,
@@ -345,7 +373,8 @@ class SutraController extends GetxController {
         id: 'ngu_gioi',
         category: SutraCategory.lesson,
         title: 'Ngũ Giới',
-        description: 'Nền tảng đạo đức: không sát sinh, trộm cắp, tà hạnh, vọng ngữ, uống rượu.',
+        description:
+            'Nền tảng đạo đức: không sát sinh, trộm cắp, tà hạnh, vọng ngữ, uống rượu.',
         content:
             'Thực tập ngũ giới để bảo hộ thân tâm, nuôi dưỡng hiểu biết và thương yêu trong đời sống hàng ngày.',
         tags: ['Giới luật', 'Cơ bản'],
@@ -365,7 +394,8 @@ class SutraController extends GetxController {
         id: 'bat_chanh_dao',
         category: SutraCategory.lesson,
         title: 'Bát Chánh Đạo',
-        description: 'Chánh kiến, tư duy, ngữ, nghiệp, mạng, tinh tấn, niệm, định.',
+        description:
+            'Chánh kiến, tư duy, ngữ, nghiệp, mạng, tinh tấn, niệm, định.',
         content:
             'Tám chi phần nâng đỡ nhau: hiểu đúng, nghĩ đúng, nói đúng, làm đúng, sống đúng, tinh tấn, chánh niệm, tập trung.',
         tags: ['Hành trì', 'Đường tu'],
@@ -375,7 +405,8 @@ class SutraController extends GetxController {
         id: 'luc_do',
         category: SutraCategory.lesson,
         title: 'Lục Độ Ba La Mật',
-        description: 'Bố thí, trì giới, nhẫn nhục, tinh tấn, thiền định, trí tuệ.',
+        description:
+            'Bố thí, trì giới, nhẫn nhục, tinh tấn, thiền định, trí tuệ.',
         content:
             'Sáu phép vượt bờ sinh tử, thực tập song song để lợi mình lợi người, nuôi dưỡng Bồ Tát hạnh.',
         tags: ['Bồ Tát hạnh'],

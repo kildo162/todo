@@ -7,8 +7,9 @@ import 'package:app/sutra/sutra_models.dart';
 class SutraHistoryScreen extends StatelessWidget {
   SutraHistoryScreen({super.key});
 
-  final SutraController controller =
-      Get.isRegistered<SutraController>() ? Get.find<SutraController>() : Get.put(SutraController(), permanent: true);
+  final SutraController controller = Get.isRegistered<SutraController>()
+      ? Get.find<SutraController>()
+      : Get.put(SutraController(), permanent: true);
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +64,11 @@ class _HistoryTile extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 10, offset: const Offset(0, 4)),
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
         ],
       ),
       child: Row(
@@ -78,8 +83,8 @@ class _HistoryTile extends StatelessWidget {
               entry.type == SutraActionType.chant
                   ? Icons.self_improvement
                   : entry.type == SutraActionType.read
-                      ? Icons.menu_book
-                      : Icons.check_circle,
+                  ? Icons.menu_book
+                  : Icons.check_circle,
               color: color,
             ),
           ),
@@ -88,11 +93,17 @@ class _HistoryTile extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: const TextStyle(fontWeight: FontWeight.w800)),
+                Text(
+                  title,
+                  style: const TextStyle(fontWeight: FontWeight.w800),
+                ),
                 const SizedBox(height: 4),
                 Text(subtitle, style: TextStyle(color: Colors.grey.shade700)),
                 const SizedBox(height: 4),
-                Text(dateStr, style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
+                Text(
+                  dateStr,
+                  style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+                ),
               ],
             ),
           ),
@@ -104,7 +115,11 @@ class _HistoryTile extends StatelessWidget {
             ),
             child: Text(
               entry.type.label,
-              style: TextStyle(color: color, fontWeight: FontWeight.w700, fontSize: 12),
+              style: TextStyle(
+                color: color,
+                fontWeight: FontWeight.w700,
+                fontSize: 12,
+              ),
             ),
           ),
         ],

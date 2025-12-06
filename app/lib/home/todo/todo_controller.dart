@@ -31,7 +31,14 @@ class TodoController extends GetxController {
         list = tasks.where((t) => t.completed).toList();
         break;
       case 'overdue':
-        list = tasks.where((t) => !t.completed && t.dueDate != null && t.dueDate!.isBefore(start)).toList();
+        list = tasks
+            .where(
+              (t) =>
+                  !t.completed &&
+                  t.dueDate != null &&
+                  t.dueDate!.isBefore(start),
+            )
+            .toList();
         break;
       default:
         list = tasks.toList();
@@ -39,9 +46,11 @@ class TodoController extends GetxController {
     final keyword = searchQuery.value.trim().toLowerCase();
     if (keyword.isNotEmpty) {
       list = list
-          .where((t) =>
-              t.title.toLowerCase().contains(keyword) ||
-              (t.description ?? '').toLowerCase().contains(keyword))
+          .where(
+            (t) =>
+                t.title.toLowerCase().contains(keyword) ||
+                (t.description ?? '').toLowerCase().contains(keyword),
+          )
           .toList();
     }
 
@@ -66,7 +75,12 @@ class TodoController extends GetxController {
     sort.value = value;
   }
 
-  Future<void> addTask(String title, {String? description, DateTime? dueDate, String priority = 'normal'}) async {
+  Future<void> addTask(
+    String title, {
+    String? description,
+    DateTime? dueDate,
+    String priority = 'normal',
+  }) async {
     final newTask = TodoItem(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       title: title,
@@ -86,7 +100,13 @@ class TodoController extends GetxController {
     await _save();
   }
 
-  Future<void> updateTask(String id, {String? title, String? description, DateTime? dueDate, String? priority}) async {
+  Future<void> updateTask(
+    String id, {
+    String? title,
+    String? description,
+    DateTime? dueDate,
+    String? priority,
+  }) async {
     final idx = tasks.indexWhere((t) => t.id == id);
     if (idx == -1) return;
     final task = tasks[idx].copyWith(
@@ -105,7 +125,9 @@ class TodoController extends GetxController {
   }
 
   Future<void> restoreTask(TodoItem task, {int? index}) async {
-    final insertIndex = index != null && index >= 0 && index <= tasks.length ? index : 0;
+    final insertIndex = index != null && index >= 0 && index <= tasks.length
+        ? index
+        : 0;
     tasks.insert(insertIndex, task);
     await _save();
   }
@@ -115,7 +137,9 @@ class TodoController extends GetxController {
     final raw = prefs.getString(_storageKey);
     if (raw != null) {
       final decoded = jsonDecode(raw) as List<dynamic>;
-      tasks.assignAll(decoded.map((e) => TodoItem.fromJson(e as Map<String, dynamic>)));
+      tasks.assignAll(
+        decoded.map((e) => TodoItem.fromJson(e as Map<String, dynamic>)),
+      );
     }
   }
 
@@ -125,7 +149,10 @@ class TodoController extends GetxController {
     await prefs.setString(_storageKey, data);
   }
 
-  int Function(TodoItem, TodoItem) _sortComparator(DateTime todayStart, String sortBy) {
+  int Function(TodoItem, TodoItem) _sortComparator(
+    DateTime todayStart,
+    String sortBy,
+  ) {
     return (a, b) {
       int priorityScore(String p) {
         switch (p) {
@@ -138,7 +165,8 @@ class TodoController extends GetxController {
         }
       }
 
-      bool overdue(TodoItem t) => !t.completed && t.dueDate != null && t.dueDate!.isBefore(todayStart);
+      bool overdue(TodoItem t) =>
+          !t.completed && t.dueDate != null && t.dueDate!.isBefore(todayStart);
 
       final oa = overdue(a);
       final ob = overdue(b);
@@ -153,7 +181,9 @@ class TodoController extends GetxController {
           } else if (b.dueDate != null) {
             return 1;
           }
-          final paDue = priorityScore(a.priority).compareTo(priorityScore(b.priority));
+          final paDue = priorityScore(
+            a.priority,
+          ).compareTo(priorityScore(b.priority));
           if (paDue != 0) return -paDue;
           return b.createdAt.compareTo(a.createdAt);
         case 'recent':

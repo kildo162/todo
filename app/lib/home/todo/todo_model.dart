@@ -38,22 +38,26 @@ class TodoItem {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'title': title,
-        'description': description,
-        'dueDate': dueDate?.toIso8601String(),
-        'completed': completed,
-        'priority': priority,
-        'createdAt': createdAt.toIso8601String(),
-      };
+    'id': id,
+    'title': title,
+    'description': description,
+    'dueDate': dueDate?.toIso8601String(),
+    'completed': completed,
+    'priority': priority,
+    'createdAt': createdAt.toIso8601String(),
+  };
 
   factory TodoItem.fromJson(Map<String, dynamic> json) => TodoItem(
-        id: json['id'] as String,
-        title: json['title'] as String,
-        description: json['description'] as String?,
-        dueDate: json['dueDate'] != null ? DateTime.parse(json['dueDate'] as String) : null,
-        completed: json['completed'] as bool? ?? false,
-        priority: json['priority'] as String? ?? 'normal',
-        createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt'] as String) : null,
-      );
+    id: json['id'] as String,
+    title: json['title'] as String,
+    description: json['description'] as String?,
+    dueDate: json['dueDate'] != null
+        ? DateTime.parse(json['dueDate'] as String)
+        : null,
+    completed: json['completed'] as bool? ?? false,
+    priority: json['priority'] as String? ?? 'normal',
+    createdAt: json['createdAt'] != null
+        ? DateTime.parse(json['createdAt'] as String)
+        : null,
+  );
 }

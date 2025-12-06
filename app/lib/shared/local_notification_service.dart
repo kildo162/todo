@@ -6,7 +6,8 @@ class LocalNotificationService {
 
   static final LocalNotificationService instance = LocalNotificationService._();
 
-  final FlutterLocalNotificationsPlugin _plugin = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin _plugin =
+      FlutterLocalNotificationsPlugin();
   bool _initialized = false;
 
   Future<void> init() async {
@@ -22,11 +23,17 @@ class LocalNotificationService {
       requestBadgePermission: true,
       requestSoundPermission: true,
     );
-    const initSettings = InitializationSettings(android: androidInit, iOS: iosInit);
+    const initSettings = InitializationSettings(
+      android: androidInit,
+      iOS: iosInit,
+    );
 
     await _plugin.initialize(initSettings);
 
-    final android = _plugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+    final android = _plugin
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >();
     await android?.requestNotificationsPermission();
 
     _initialized = true;
@@ -55,7 +62,10 @@ class LocalNotificationService {
       presentSound: true,
       presentBadge: true,
     );
-    const details = NotificationDetails(android: androidDetails, iOS: iosDetails);
+    const details = NotificationDetails(
+      android: androidDetails,
+      iOS: iosDetails,
+    );
 
     await _plugin.show(
       DateTime.now().millisecondsSinceEpoch ~/ 1000,

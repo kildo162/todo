@@ -94,19 +94,22 @@ class SutraHistoryEntry {
   });
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'itemId': itemId,
-        'type': type.name,
-        'time': time.toIso8601String(),
-        'count': count,
-        'durationMinutes': durationMinutes,
-      };
+    'id': id,
+    'itemId': itemId,
+    'type': type.name,
+    'time': time.toIso8601String(),
+    'count': count,
+    'durationMinutes': durationMinutes,
+  };
 
   factory SutraHistoryEntry.fromJson(Map<String, dynamic> json) {
     return SutraHistoryEntry(
       id: json['id'] as String,
       itemId: json['itemId'] as String,
-      type: SutraActionType.values.firstWhere((e) => e.name == (json['type'] as String? ?? 'chant'), orElse: () => SutraActionType.chant),
+      type: SutraActionType.values.firstWhere(
+        (e) => e.name == (json['type'] as String? ?? 'chant'),
+        orElse: () => SutraActionType.chant,
+      ),
       time: DateTime.parse(json['time'] as String),
       count: (json['count'] as num?)?.toInt() ?? 1,
       durationMinutes: json['durationMinutes'] as int?,

@@ -29,7 +29,9 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
     final user = controller.user;
     nameController = TextEditingController(text: user?.displayName ?? '');
     emailController = TextEditingController(text: user?.email ?? '');
-    planController = TextEditingController(text: user?.plan ?? 'Gói tiêu chuẩn');
+    planController = TextEditingController(
+      text: user?.plan ?? 'Gói tiêu chuẩn',
+    );
     avatarController = TextEditingController(text: user?.avatarUrl ?? '');
   }
 
@@ -107,7 +109,10 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                           color: Colors.deepPurple.shade50,
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: Icon(Icons.person_pin_circle, color: Colors.deepPurple.shade400),
+                        child: Icon(
+                          Icons.person_pin_circle,
+                          color: Colors.deepPurple.shade400,
+                        ),
                       ),
                       const SizedBox(width: 10),
                       Expanded(
@@ -116,11 +121,17 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                           children: [
                             const Text(
                               'Cập nhật hồ sơ',
-                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                              ),
                             ),
                             Text(
                               'Điền thông tin để cá nhân hóa trải nghiệm.',
-                              style: TextStyle(color: Colors.grey.shade700, fontSize: 13),
+                              style: TextStyle(
+                                color: Colors.grey.shade700,
+                                fontSize: 13,
+                              ),
                             ),
                           ],
                         ),
@@ -162,7 +173,10 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                           ? const SizedBox(
                               width: 18,
                               height: 18,
-                              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
                             )
                           : const Icon(Icons.save_outlined),
                       label: Text(isSaving ? 'Đang lưu...' : 'Lưu thông tin'),
@@ -170,7 +184,9 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                         backgroundColor: const Color(0xFF512DA8),
                         elevation: 0,
                         padding: const EdgeInsets.symmetric(vertical: 12),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
                     ),
                   ),
@@ -201,7 +217,10 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,
         ),
-        contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+        contentPadding: const EdgeInsets.symmetric(
+          vertical: 14,
+          horizontal: 12,
+        ),
       ),
     );
   }

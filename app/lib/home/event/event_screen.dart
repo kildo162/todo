@@ -332,7 +332,18 @@ class EventTabScreen extends StatelessWidget {
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-              child: Obx(() => _EventStats(controller: controller)),
+              child: Obx(() {
+                final categories = controller.categoryBreakdown;
+                final reminderLogs = controller.reminderLog.reversed
+                    .take(3)
+                    .toList();
+                return _EventStats(
+                  eventsThisWeek: controller.eventsThisWeek,
+                  eventsThisMonth: controller.eventsThisMonth,
+                  categories: categories,
+                  reminderLogs: reminderLogs,
+                );
+              }),
             ),
           ),
           SliverToBoxAdapter(
@@ -701,14 +712,20 @@ class _LegendDot extends StatelessWidget {
 }
 
 class _EventStats extends StatelessWidget {
-  final EventController controller;
+  final int eventsThisWeek;
+  final int eventsThisMonth;
+  final Map<String, int> categories;
+  final List<String> reminderLogs;
 
-  const _EventStats({required this.controller});
+  const _EventStats({
+    required this.eventsThisWeek,
+    required this.eventsThisMonth,
+    required this.categories,
+    required this.reminderLogs,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final categories = controller.categoryBreakdown;
-    final reminderLogs = controller.reminderLog.reversed.take(3).toList();
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -729,13 +746,13 @@ class _EventStats extends StatelessWidget {
             children: [
               _StatTile(
                 label: 'Tuần này',
-                value: controller.eventsThisWeek.toString(),
+                value: eventsThisWeek.toString(),
                 color: Colors.blue,
               ),
               const SizedBox(width: 12),
               _StatTile(
                 label: 'Tháng này',
-                value: controller.eventsThisMonth.toString(),
+                value: eventsThisMonth.toString(),
                 color: Colors.green,
               ),
             ],

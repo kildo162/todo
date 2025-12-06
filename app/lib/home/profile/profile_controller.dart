@@ -47,14 +47,12 @@ class ProfileController extends GetxController {
     String? plan,
     String? avatarUrl,
   }) async {
-    final current = session.user.value ??
-        SessionUser(
-          displayName: '',
-          email: '',
-        );
+    final current =
+        session.user.value ?? SessionUser(displayName: '', email: '');
     final trimmedPlan = plan?.trim() ?? '';
-    final planToSave =
-        trimmedPlan.isNotEmpty ? trimmedPlan : (current.plan.isNotEmpty ? current.plan : 'Gói tiêu chuẩn');
+    final planToSave = trimmedPlan.isNotEmpty
+        ? trimmedPlan
+        : (current.plan.isNotEmpty ? current.plan : 'Gói tiêu chuẩn');
     final updated = current.copyWith(
       displayName: displayName,
       email: email,
@@ -106,7 +104,9 @@ class ProfileController extends GetxController {
   }
 
   Future<void> sendTestNotification() async {
-    final name = user?.displayName.isNotEmpty == true ? user!.displayName : 'bạn';
+    final name = user?.displayName.isNotEmpty == true
+        ? user!.displayName
+        : 'bạn';
     notificationController.addTestNotification(
       title: 'Thông báo thử',
       body: 'Xin chào $name, đây là thông báo thử của ứng dụng.',
@@ -115,6 +115,9 @@ class ProfileController extends GetxController {
       title: 'Thông báo thử',
       body: 'Xin chào $name, đây là thông báo thử của ứng dụng.',
     );
-    ToastUtils.showToast('Đã gửi thông báo thử', backgroundColor: const Color(0xFF2563EB));
+    ToastUtils.showToast(
+      'Đã gửi thông báo thử',
+      backgroundColor: const Color(0xFF2563EB),
+    );
   }
 }

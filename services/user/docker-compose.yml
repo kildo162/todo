@@ -1,0 +1,11 @@
+services:
+  user-service:
+    build: .
+    environment:
+      - JWT_SECRET=dev-secret
+      - USER_LISTEN_ADDR=:8443
+      - DISCOVERY_ENABLED=true
+    ports:
+      - "8443:8443"
+    volumes:
+      - ./data:/app/data

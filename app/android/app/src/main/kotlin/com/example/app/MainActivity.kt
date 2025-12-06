@@ -1,5 +1,2 @@
-package com.example.app
-
-import io.flutter.embedding.android.FlutterActivity
-
-class MainActivity : FlutterActivity()
+// MainActivity moved to com.khanhnd.app package
+// Deprecated: removed default Flutter MainActivity here. See com/khanhnd/app/MainActivity.kt

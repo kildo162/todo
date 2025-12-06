@@ -33,7 +33,12 @@ class _BaseScreenState extends State<BaseScreen> {
     });
   }
 
-  Widget _buildTabItem(int index, String outlineIcon, String solidIcon, String label) {
+  Widget _buildTabItem(
+    int index,
+    String outlineIcon,
+    String solidIcon,
+    String label,
+  ) {
     return Expanded(
       child: InkWell(
         onTap: () => _onTabSelected(index),
@@ -45,10 +50,20 @@ class _BaseScreenState extends State<BaseScreen> {
             SvgPicture.asset(
               _selectedIndex == index ? solidIcon : outlineIcon,
               height: 24,
-              colorFilter: ColorFilter.mode(_selectedIndex == index ? Colors.blue : Colors.grey, BlendMode.srcIn),
+              colorFilter: ColorFilter.mode(
+                _selectedIndex == index ? Colors.blue : Colors.grey,
+                BlendMode.srcIn,
+              ),
             ),
             SizedBox(height: 2),
-            Text(label, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: _selectedIndex == index ? Colors.blue : Colors.grey)),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                color: _selectedIndex == index ? Colors.blue : Colors.grey,
+              ),
+            ),
           ],
         ),
       ),
@@ -59,7 +74,9 @@ class _BaseScreenState extends State<BaseScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.only(bottom: 0), // Add extra space for FAB and BottomAppBar
+        padding: const EdgeInsets.only(
+          bottom: 0,
+        ), // Add extra space for FAB and BottomAppBar
         child: _screens[_selectedIndex],
       ),
       floatingActionButton: Container(
@@ -107,11 +124,31 @@ class _BaseScreenState extends State<BaseScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildTabItem(0, 'assets/icons/outline/home.svg', 'assets/icons/solid/home.svg', 'Home'),
-              _buildTabItem(1, 'assets/icons/outline/calendar.svg', 'assets/icons/solid/calendar.svg', 'Event'),
+              _buildTabItem(
+                0,
+                'assets/icons/outline/home.svg',
+                'assets/icons/solid/home.svg',
+                'Home',
+              ),
+              _buildTabItem(
+                1,
+                'assets/icons/outline/calendar.svg',
+                'assets/icons/solid/calendar.svg',
+                'Event',
+              ),
               SizedBox(width: 60), // Space for bigger FAB
-              _buildTabItem(2, 'assets/icons/outline/bell.svg', 'assets/icons/solid/bell.svg', 'Notification'),
-              _buildTabItem(3, 'assets/icons/outline/user.svg', 'assets/icons/solid/user.svg', 'Profile'),
+              _buildTabItem(
+                2,
+                'assets/icons/outline/bell.svg',
+                'assets/icons/solid/bell.svg',
+                'Notification',
+              ),
+              _buildTabItem(
+                3,
+                'assets/icons/outline/user.svg',
+                'assets/icons/solid/user.svg',
+                'Profile',
+              ),
             ],
           ),
         ),

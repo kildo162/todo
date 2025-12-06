@@ -25,7 +25,8 @@ class _SwipeBackWrapperState extends State<SwipeBackWrapper> {
   bool _eligible = false;
   double _dragDistance = 0;
 
-  bool get _canPop => Get.key.currentState?.canPop() ?? Navigator.of(context).canPop();
+  bool get _canPop =>
+      Get.key.currentState?.canPop() ?? Navigator.of(context).canPop();
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +45,8 @@ class _SwipeBackWrapperState extends State<SwipeBackWrapper> {
       },
       onHorizontalDragEnd: (details) {
         final velocity = details.velocity.pixelsPerSecond.dx;
-        final shouldPop = _eligible &&
+        final shouldPop =
+            _eligible &&
             _canPop &&
             _dragDistance > widget.minDragDistance &&
             velocity > widget.minFlingVelocity;

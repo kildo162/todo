@@ -64,7 +64,9 @@ class AppTheme {
       cardTheme: CardThemeData(
         color: AppColors.surface,
         elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadii.large)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadii.large),
+        ),
         margin: EdgeInsets.zero,
         shadowColor: AppColors.shadow,
       ),
@@ -72,7 +74,9 @@ class AppTheme {
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadii.medium)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppRadii.medium),
+          ),
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         ),
       ),
@@ -85,10 +89,15 @@ class AppTheme {
       chipTheme: base.chipTheme.copyWith(
         side: const BorderSide(color: AppColors.border),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-        shape: StadiumBorder(side: BorderSide(color: AppColors.border.withOpacity(0.8))),
+        shape: StadiumBorder(
+          side: BorderSide(color: AppColors.border.withOpacity(0.8)),
+        ),
         backgroundColor: Colors.white,
         selectedColor: const Color(0xFFEFF4FF),
-        labelStyle: const TextStyle(fontWeight: FontWeight.w700, color: AppColors.textPrimary),
+        labelStyle: const TextStyle(
+          fontWeight: FontWeight.w700,
+          color: AppColors.textPrimary,
+        ),
       ),
       dividerColor: AppColors.border,
     );

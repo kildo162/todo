@@ -74,16 +74,21 @@ class NotificationController extends GetxController {
   Future<void> fetchNotifications() async {
     await Future.delayed(Duration(seconds: 1));
     // Add new mock notification for demo
-    notifications.insert(0, NotificationModel(
-      title: 'Pulled Notification',
-      body: 'This notification was fetched by pull-to-refresh.',
-      read: false,
-      time: DateTime.now(),
-    ));
+    notifications.insert(
+      0,
+      NotificationModel(
+        title: 'Pulled Notification',
+        body: 'This notification was fetched by pull-to-refresh.',
+        read: false,
+        time: DateTime.now(),
+      ),
+    );
   }
 
   void markAllAsRead() {
-    notifications.value = notifications.map((n) => n.copyWith(read: true)).toList();
+    notifications.value = notifications
+        .map((n) => n.copyWith(read: true))
+        .toList();
   }
 
   NotificationModel addTestNotification({

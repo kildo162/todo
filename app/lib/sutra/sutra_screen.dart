@@ -11,8 +11,9 @@ import 'package:app/utils/toast_utils.dart';
 class SutraScreen extends StatelessWidget {
   SutraScreen({super.key});
 
-  final SutraController controller =
-      Get.isRegistered<SutraController>() ? Get.find<SutraController>() : Get.put(SutraController(), permanent: true);
+  final SutraController controller = Get.isRegistered<SutraController>()
+      ? Get.find<SutraController>()
+      : Get.put(SutraController(), permanent: true);
 
   @override
   Widget build(BuildContext context) {
@@ -37,17 +38,30 @@ class SutraScreen extends StatelessWidget {
           children: [
             Container(
               padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(color: Colors.white.withOpacity(0.18), shape: BoxShape.circle),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.18),
+                shape: BoxShape.circle,
+              ),
               child: const Icon(Icons.menu_book_outlined, color: Colors.white),
             ),
             const SizedBox(width: 10),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Sutra', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 18)),
+                const Text(
+                  'Sutra',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 18,
+                  ),
+                ),
                 Text(
                   'Tụng kinh · Kinh kệ · Phật pháp',
-                  style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 12),
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.9),
+                    fontSize: 12,
+                  ),
                 ),
               ],
             ),
@@ -93,7 +107,13 @@ class SutraScreen extends StatelessWidget {
                     backgroundColor: Colors.blue,
                   );
                 },
-                onOpenFavorites: favorites > 0 ? () => Get.to(() => SutraDetailScreen(item: controller.favoriteItems.first)) : null,
+                onOpenFavorites: favorites > 0
+                    ? () => Get.to(
+                        () => SutraDetailScreen(
+                          item: controller.favoriteItems.first,
+                        ),
+                      )
+                    : null,
                 onOpenHistory: () => Get.to(() => SutraHistoryScreen()),
               ),
               const SizedBox(height: 14),
@@ -106,17 +126,27 @@ class SutraScreen extends StatelessWidget {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
-                      BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 10, offset: const Offset(0, 4)),
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.04),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
                     ],
                   ),
-                  child: Text('Không tìm thấy bài phù hợp, hãy đổi bộ lọc hoặc tìm kiếm khác.', style: TextStyle(color: Colors.grey.shade700)),
+                  child: Text(
+                    'Không tìm thấy bài phù hợp, hãy đổi bộ lọc hoặc tìm kiếm khác.',
+                    style: TextStyle(color: Colors.grey.shade700),
+                  ),
                 )
               else
                 Column(
                   children: filtered
                       .map(
                         (item) => isCompact
-                            ? _CompactItemTile(item: item, controller: controller)
+                            ? _CompactItemTile(
+                                item: item,
+                                controller: controller,
+                              )
                             : _buildCardByCategory(item, controller),
                       )
                       .toList(),
@@ -137,22 +167,30 @@ class SutraScreen extends StatelessWidget {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
-                        BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 10, offset: const Offset(0, 4)),
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.04),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
                       ],
                     ),
-                    child: Text('Chưa có lịch sử, hãy bắt đầu tụng hoặc đọc một bài.', style: TextStyle(color: Colors.grey.shade700)),
+                    child: Text(
+                      'Chưa có lịch sử, hãy bắt đầu tụng hoặc đọc một bài.',
+                      style: TextStyle(color: Colors.grey.shade700),
+                    ),
                   );
                 }
                 return Column(
                   children: history.take(5).map((h) {
                     final item = controller.findById(h.itemId);
                     final color = h.type.color;
-                    final dateStr = '${h.time.day}/${h.time.month} ${h.time.hour.toString().padLeft(2, '0')}:${h.time.minute.toString().padLeft(2, '0')}';
+                    final dateStr =
+                        '${h.time.day}/${h.time.month} ${h.time.hour.toString().padLeft(2, '0')}:${h.time.minute.toString().padLeft(2, '0')}';
                     final subtitle = h.type == SutraActionType.chant
                         ? 'Tụng +${h.count}'
                         : h.type == SutraActionType.read
-                            ? 'Đọc${h.durationMinutes != null ? ' ~${h.durationMinutes}p' : ''}'
-                            : 'Hoàn thành';
+                        ? 'Đọc${h.durationMinutes != null ? ' ~${h.durationMinutes}p' : ''}'
+                        : 'Hoàn thành';
                     return Container(
                       margin: const EdgeInsets.only(bottom: 10),
                       padding: const EdgeInsets.all(12),
@@ -160,20 +198,27 @@ class SutraScreen extends StatelessWidget {
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(12),
                         boxShadow: [
-                          BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 10, offset: const Offset(0, 4)),
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.04),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
                         ],
                       ),
                       child: Row(
                         children: [
                           Container(
                             padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(color: color.withOpacity(0.12), borderRadius: BorderRadius.circular(12)),
+                            decoration: BoxDecoration(
+                              color: color.withOpacity(0.12),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                             child: Icon(
                               h.type == SutraActionType.chant
                                   ? Icons.self_improvement
                                   : h.type == SutraActionType.read
-                                      ? Icons.menu_book
-                                      : Icons.check_circle,
+                                  ? Icons.menu_book
+                                  : Icons.check_circle,
                               color: color,
                             ),
                           ),
@@ -182,16 +227,34 @@ class SutraScreen extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(item?.title ?? 'Không tìm thấy bài', style: const TextStyle(fontWeight: FontWeight.w800)),
+                                Text(
+                                  item?.title ?? 'Không tìm thấy bài',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                ),
                                 const SizedBox(height: 4),
-                                Text(subtitle, style: TextStyle(color: Colors.grey.shade700)),
+                                Text(
+                                  subtitle,
+                                  style: TextStyle(color: Colors.grey.shade700),
+                                ),
                                 const SizedBox(height: 4),
-                                Text(dateStr, style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
+                                Text(
+                                  dateStr,
+                                  style: TextStyle(
+                                    color: Colors.grey.shade600,
+                                    fontSize: 12,
+                                  ),
+                                ),
                               ],
                             ),
                           ),
                           TextButton(
-                            onPressed: item != null ? () => Get.to(() => SutraDetailScreen(item: item)) : null,
+                            onPressed: item != null
+                                ? () => Get.to(
+                                    () => SutraDetailScreen(item: item),
+                                  )
+                                : null,
                             child: const Text('Xem'),
                           ),
                         ],
@@ -235,7 +298,10 @@ class _FilterBar extends StatelessWidget {
             }),
             filled: true,
             fillColor: Colors.white,
-            contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+            contentPadding: const EdgeInsets.symmetric(
+              vertical: 12,
+              horizontal: 12,
+            ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(color: Colors.grey.shade200),
@@ -295,7 +361,10 @@ class _FilterBar extends StatelessWidget {
                     labelText: 'Sắp xếp',
                     filled: true,
                     fillColor: Colors.white,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(color: Colors.grey.shade200),
@@ -304,7 +373,10 @@ class _FilterBar extends StatelessWidget {
                   items: const [
                     DropdownMenuItem(value: 'default', child: Text('Mặc định')),
                     DropdownMenuItem(value: 'recent', child: Text('Gần đây')),
-                    DropdownMenuItem(value: 'duration', child: Text('Thời lượng tăng')),
+                    DropdownMenuItem(
+                      value: 'duration',
+                      child: Text('Thời lượng tăng'),
+                    ),
                     DropdownMenuItem(value: 'title', child: Text('Tên A-Z')),
                   ],
                   onChanged: (value) {
@@ -318,7 +390,11 @@ class _FilterBar extends StatelessWidget {
               final compact = controller.compactMode.value;
               return OutlinedButton.icon(
                 onPressed: () => controller.compactMode.value = !compact,
-                icon: Icon(compact ? Icons.view_agenda_outlined : Icons.view_comfy_alt_outlined),
+                icon: Icon(
+                  compact
+                      ? Icons.view_agenda_outlined
+                      : Icons.view_comfy_alt_outlined,
+                ),
                 label: Text(compact ? 'Chi tiết' : 'Gọn'),
               );
             }),
@@ -375,7 +451,13 @@ class _StatHeader extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        boxShadow: [BoxShadow(color: Colors.blue.shade100, blurRadius: 12, offset: const Offset(0, 6))],
+        boxShadow: [
+          BoxShadow(
+            color: Colors.blue.shade100,
+            blurRadius: 12,
+            offset: const Offset(0, 6),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -398,7 +480,11 @@ class _StatHeader extends StatelessWidget {
                   children: [
                     const Text(
                       'Hành trì hôm nay',
-                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 18),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 18,
+                      ),
                     ),
                     Text(
                       'Ghi nhận tụng niệm và học pháp để nuôi dưỡng chánh niệm.',
@@ -412,9 +498,19 @@ class _StatHeader extends StatelessWidget {
           const SizedBox(height: 14),
           Row(
             children: [
-              _statTile('Biến tụng', '$totalChants', Icons.favorite, Colors.white),
+              _statTile(
+                'Biến tụng',
+                '$totalChants',
+                Icons.favorite,
+                Colors.white,
+              ),
               const SizedBox(width: 10),
-              _statTile('Bài học', '$completedLessons', Icons.school, Colors.white),
+              _statTile(
+                'Bài học',
+                '$completedLessons',
+                Icons.school,
+                Colors.white,
+              ),
               const SizedBox(width: 10),
               _statTile('Ưa thích', '$favorites', Icons.star, Colors.white),
             ],
@@ -437,7 +533,14 @@ class _StatHeader extends StatelessWidget {
           children: [
             Icon(icon, color: textColor),
             const SizedBox(height: 6),
-            Text(value, style: TextStyle(color: textColor, fontSize: 18, fontWeight: FontWeight.bold)),
+            Text(
+              value,
+              style: TextStyle(
+                color: textColor,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             const SizedBox(height: 2),
             Text(label, style: TextStyle(color: textColor.withOpacity(0.9))),
           ],
@@ -506,7 +609,9 @@ class _QuickPractice extends StatelessWidget {
               backgroundColor: Colors.blue.shade600,
               elevation: 0,
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
             child: const Text('Ghi nhận'),
           ),
@@ -516,8 +621,13 @@ class _QuickPractice extends StatelessWidget {
               onPressed: onOpenFavorites,
               style: OutlinedButton.styleFrom(
                 side: BorderSide(color: Colors.blue.shade200),
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 10,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
               child: const Text('Ưa thích'),
             ),
@@ -527,8 +637,13 @@ class _QuickPractice extends StatelessWidget {
               onPressed: onOpenHistory,
               style: OutlinedButton.styleFrom(
                 side: BorderSide(color: Colors.blue.shade200),
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 10,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
               child: const Text('Lịch sử'),
             ),
@@ -553,7 +668,11 @@ class _ChantCard extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 12, offset: const Offset(0, 4)),
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
         ],
       ),
       child: Column(
@@ -567,23 +686,39 @@ class _ChantCard extends StatelessWidget {
                   color: Colors.blue.shade50,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(Icons.self_improvement, color: Colors.blue.shade700),
+                child: Icon(
+                  Icons.self_improvement,
+                  color: Colors.blue.shade700,
+                ),
               ),
               const SizedBox(width: 10),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(item.title, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15)),
+                    Text(
+                      item.title,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w800,
+                        fontSize: 15,
+                      ),
+                    ),
                     const SizedBox(height: 4),
-                    Text(item.description, style: TextStyle(color: Colors.grey.shade700)),
+                    Text(
+                      item.description,
+                      style: TextStyle(color: Colors.grey.shade700),
+                    ),
                   ],
                 ),
               ),
               IconButton(
                 icon: Icon(
-                  controller.isFavorite(item.id) ? Icons.star : Icons.star_border,
-                  color: controller.isFavorite(item.id) ? Colors.orange : Colors.grey.shade500,
+                  controller.isFavorite(item.id)
+                      ? Icons.star
+                      : Icons.star_border,
+                  color: controller.isFavorite(item.id)
+                      ? Colors.orange
+                      : Colors.grey.shade500,
                 ),
                 onPressed: () => controller.toggleFavorite(item.id),
               ),
@@ -608,7 +743,14 @@ class _ChantCard extends StatelessWidget {
                   color: Colors.indigo.shade50,
                   textColor: Colors.indigo.shade700,
                 ),
-              ...item.tags.map((tag) => _chip(icon: Icons.tag, text: tag, color: Colors.grey.shade200, textColor: Colors.grey.shade800)),
+              ...item.tags.map(
+                (tag) => _chip(
+                  icon: Icons.tag,
+                  text: tag,
+                  color: Colors.grey.shade200,
+                  textColor: Colors.grey.shade800,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 10),
@@ -620,10 +762,19 @@ class _ChantCard extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Text('Đã tụng: $count', style: TextStyle(color: Colors.grey.shade800, fontWeight: FontWeight.w600)),
+                    Text(
+                      'Đã tụng: $count',
+                      style: TextStyle(
+                        color: Colors.grey.shade800,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                     if (item.targetCount != null) ...[
                       const SizedBox(width: 8),
-                      Text('· Mục tiêu ${item.targetCount}', style: TextStyle(color: Colors.grey.shade600)),
+                      Text(
+                        '· Mục tiêu ${item.targetCount}',
+                        style: TextStyle(color: Colors.grey.shade600),
+                      ),
                     ],
                   ],
                 ),
@@ -634,7 +785,9 @@ class _ChantCard extends StatelessWidget {
                     value: progress == 0 ? 0.02 : progress,
                     backgroundColor: Colors.grey.shade200,
                     minHeight: 8,
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.blue.shade600),
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      Colors.blue.shade600,
+                    ),
                   ),
                 ),
               ],
@@ -650,8 +803,13 @@ class _ChantCard extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue.shade600,
                   elevation: 0,
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 10,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
               ),
               const SizedBox(width: 10),
@@ -661,8 +819,13 @@ class _ChantCard extends StatelessWidget {
                 label: const Text('Xem chi tiết'),
                 style: OutlinedButton.styleFrom(
                   side: BorderSide(color: Colors.blue.shade200),
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 10,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
               ),
             ],
@@ -689,20 +852,27 @@ class _CompactItemTile extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 10, offset: const Offset(0, 4)),
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
         ],
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(color: color.withOpacity(0.12), borderRadius: BorderRadius.circular(12)),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.12),
+              borderRadius: BorderRadius.circular(12),
+            ),
             child: Icon(
               item.category == SutraCategory.chant
                   ? Icons.self_improvement
                   : item.category == SutraCategory.scripture
-                      ? Icons.menu_book_outlined
-                      : Icons.psychology_alt,
+                  ? Icons.menu_book_outlined
+                  : Icons.psychology_alt,
               color: color,
             ),
           ),
@@ -711,7 +881,10 @@ class _CompactItemTile extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(item.title, style: const TextStyle(fontWeight: FontWeight.w800)),
+                Text(
+                  item.title,
+                  style: const TextStyle(fontWeight: FontWeight.w800),
+                ),
                 const SizedBox(height: 4),
                 Text(
                   item.description,
@@ -747,8 +920,12 @@ class _CompactItemTile extends StatelessWidget {
             children: [
               IconButton(
                 icon: Icon(
-                  controller.isFavorite(item.id) ? Icons.star : Icons.star_border,
-                  color: controller.isFavorite(item.id) ? Colors.orange : Colors.grey.shade500,
+                  controller.isFavorite(item.id)
+                      ? Icons.star
+                      : Icons.star_border,
+                  color: controller.isFavorite(item.id)
+                      ? Colors.orange
+                      : Colors.grey.shade500,
                 ),
                 onPressed: () => controller.toggleFavorite(item.id),
               ),
@@ -790,7 +967,11 @@ class _ScriptureCard extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 12, offset: const Offset(0, 4)),
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
         ],
       ),
       child: Column(
@@ -804,23 +985,39 @@ class _ScriptureCard extends StatelessWidget {
                   color: Colors.deepPurple.shade50,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(Icons.menu_book_rounded, color: Colors.deepPurple.shade600),
+                child: Icon(
+                  Icons.menu_book_rounded,
+                  color: Colors.deepPurple.shade600,
+                ),
               ),
               const SizedBox(width: 10),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(item.title, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15)),
+                    Text(
+                      item.title,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w800,
+                        fontSize: 15,
+                      ),
+                    ),
                     const SizedBox(height: 4),
-                    Text(item.description, style: TextStyle(color: Colors.grey.shade700)),
+                    Text(
+                      item.description,
+                      style: TextStyle(color: Colors.grey.shade700),
+                    ),
                   ],
                 ),
               ),
               IconButton(
                 icon: Icon(
-                  controller.isFavorite(item.id) ? Icons.star : Icons.star_border,
-                  color: controller.isFavorite(item.id) ? Colors.orange : Colors.grey.shade500,
+                  controller.isFavorite(item.id)
+                      ? Icons.star
+                      : Icons.star_border,
+                  color: controller.isFavorite(item.id)
+                      ? Colors.orange
+                      : Colors.grey.shade500,
                 ),
                 onPressed: () => controller.toggleFavorite(item.id),
               ),
@@ -838,7 +1035,14 @@ class _ScriptureCard extends StatelessWidget {
                   color: Colors.deepPurple.shade50,
                   textColor: Colors.deepPurple.shade700,
                 ),
-              ...item.tags.map((tag) => _chip(icon: Icons.label, text: tag, color: Colors.grey.shade200, textColor: Colors.grey.shade800)),
+              ...item.tags.map(
+                (tag) => _chip(
+                  icon: Icons.label,
+                  text: tag,
+                  color: Colors.grey.shade200,
+                  textColor: Colors.grey.shade800,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 10),
@@ -874,7 +1078,11 @@ class _LessonCard extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 12, offset: const Offset(0, 4)),
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
         ],
       ),
       child: Column(
@@ -895,9 +1103,18 @@ class _LessonCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(item.title, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15)),
+                    Text(
+                      item.title,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w800,
+                        fontSize: 15,
+                      ),
+                    ),
                     const SizedBox(height: 4),
-                    Text(item.description, style: TextStyle(color: Colors.grey.shade700)),
+                    Text(
+                      item.description,
+                      style: TextStyle(color: Colors.grey.shade700),
+                    ),
                   ],
                 ),
               ),
@@ -923,7 +1140,14 @@ class _LessonCard extends StatelessWidget {
                 color: Colors.green.shade50,
                 textColor: Colors.green.shade700,
               ),
-              ...item.tags.map((tag) => _chip(icon: Icons.label, text: tag, color: Colors.grey.shade200, textColor: Colors.grey.shade800)),
+              ...item.tags.map(
+                (tag) => _chip(
+                  icon: Icons.label,
+                  text: tag,
+                  color: Colors.grey.shade200,
+                  textColor: Colors.grey.shade800,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 10),
@@ -936,8 +1160,13 @@ class _LessonCard extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green.shade600,
                   elevation: 0,
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 10,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
               ),
               const SizedBox(width: 10),
@@ -984,9 +1213,19 @@ class _SectionTitle extends StatelessWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: color)),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w800,
+                color: color,
+              ),
+            ),
             const SizedBox(height: 4),
-            Text(subtitle, style: TextStyle(fontSize: 12, color: Colors.grey.shade700)),
+            Text(
+              subtitle,
+              style: TextStyle(fontSize: 12, color: Colors.grey.shade700),
+            ),
           ],
         ),
       ],
@@ -1011,7 +1250,14 @@ Widget _chip({
       children: [
         Icon(icon, color: textColor, size: 16),
         const SizedBox(width: 6),
-        Text(text, style: TextStyle(color: textColor, fontSize: 12, fontWeight: FontWeight.w600)),
+        Text(
+          text,
+          style: TextStyle(
+            color: textColor,
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
       ],
     ),
   );

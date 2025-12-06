@@ -82,7 +82,9 @@ class LanguageScreen extends StatelessWidget {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(
-                    color: selected ? Colors.blue.shade400 : Colors.grey.shade200,
+                    color: selected
+                        ? Colors.blue.shade400
+                        : Colors.grey.shade200,
                     width: selected ? 1.4 : 1,
                   ),
                   boxShadow: [
@@ -98,12 +100,16 @@ class LanguageScreen extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: selected ? Colors.blue.shade50 : Colors.grey.shade100,
+                        color: selected
+                            ? Colors.blue.shade50
+                            : Colors.grey.shade100,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Icon(
                         Icons.language,
-                        color: selected ? Colors.blue.shade600 : Colors.grey.shade700,
+                        color: selected
+                            ? Colors.blue.shade600
+                            : Colors.grey.shade700,
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -135,13 +141,21 @@ class LanguageScreen extends StatelessWidget {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: selected ? Colors.blue.shade500 : Colors.grey.shade400,
+                          color: selected
+                              ? Colors.blue.shade500
+                              : Colors.grey.shade400,
                           width: 1.4,
                         ),
-                        color: selected ? Colors.blue.shade500 : Colors.transparent,
+                        color: selected
+                            ? Colors.blue.shade500
+                            : Colors.transparent,
                       ),
                       child: selected
-                          ? const Icon(Icons.check, size: 14, color: Colors.white)
+                          ? const Icon(
+                              Icons.check,
+                              size: 14,
+                              color: Colors.white,
+                            )
                           : null,
                     ),
                   ],

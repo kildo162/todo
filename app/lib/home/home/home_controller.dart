@@ -25,11 +25,11 @@ class QuickAction {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'label': label,
-        'icon': icon,
-        'enabled': enabled,
-      };
+    'id': id,
+    'label': label,
+    'icon': icon,
+    'enabled': enabled,
+  };
 
   factory QuickAction.fromJson(Map<String, dynamic> json) {
     return QuickAction(
@@ -52,7 +52,8 @@ class HomeController extends GetxController {
     _loadActions();
   }
 
-  List<QuickAction> get visibleActions => quickActions.where((e) => e.enabled).toList();
+  List<QuickAction> get visibleActions =>
+      quickActions.where((e) => e.enabled).toList();
 
   Future<void> toggleAction(String id, bool enabled) async {
     final idx = quickActions.indexWhere((e) => e.id == id);
@@ -80,7 +81,11 @@ class HomeController extends GetxController {
     final raw = prefs.getString(_storageKey);
     if (raw != null && raw.isNotEmpty) {
       final decoded = jsonDecode(raw) as List<dynamic>;
-      quickActions.assignAll(decoded.map((e) => QuickAction.fromJson(e as Map<String, dynamic>)).toList());
+      quickActions.assignAll(
+        decoded
+            .map((e) => QuickAction.fromJson(e as Map<String, dynamic>))
+            .toList(),
+      );
       final added = _ensureRequiredActions();
       if (added) {
         await _saveActions();
@@ -111,14 +116,54 @@ class HomeController extends GetxController {
 
   List<QuickAction> _defaultActions() {
     return const [
-      QuickAction(id: 'event', label: 'Sự kiện', icon: 'assets/icons/solid/calendar.svg', enabled: true),
-      QuickAction(id: 'todo', label: 'Việc cần làm', icon: 'assets/icons/solid/clipboard-document-check.svg', enabled: true),
-      QuickAction(id: 'sutra', label: 'Kinh kệ', icon: 'assets/icons/solid/book-open.svg', enabled: true),
-      QuickAction(id: 'notification', label: 'Thông báo', icon: 'assets/icons/solid/bell.svg', enabled: true),
-      QuickAction(id: 'note', label: 'Ghi chú', icon: 'assets/icons/solid/pencil-square.svg', enabled: true),
-      QuickAction(id: 'health', label: 'Sức khỏe', icon: 'assets/icons/solid/heart.svg', enabled: true),
-      QuickAction(id: 'settings', label: 'Cài đặt', icon: 'assets/icons/solid/cog-6-tooth.svg', enabled: true),
-      QuickAction(id: 'manage', label: 'Quản lý lối tắt', icon: 'assets/icons/solid/squares-2x2.svg', enabled: true),
+      QuickAction(
+        id: 'event',
+        label: 'Sự kiện',
+        icon: 'assets/icons/solid/calendar.svg',
+        enabled: true,
+      ),
+      QuickAction(
+        id: 'todo',
+        label: 'Việc cần làm',
+        icon: 'assets/icons/solid/clipboard-document-check.svg',
+        enabled: true,
+      ),
+      QuickAction(
+        id: 'sutra',
+        label: 'Kinh kệ',
+        icon: 'assets/icons/solid/book-open.svg',
+        enabled: true,
+      ),
+      QuickAction(
+        id: 'notification',
+        label: 'Thông báo',
+        icon: 'assets/icons/solid/bell.svg',
+        enabled: true,
+      ),
+      QuickAction(
+        id: 'note',
+        label: 'Ghi chú',
+        icon: 'assets/icons/solid/pencil-square.svg',
+        enabled: true,
+      ),
+      QuickAction(
+        id: 'health',
+        label: 'Sức khỏe',
+        icon: 'assets/icons/solid/heart.svg',
+        enabled: true,
+      ),
+      QuickAction(
+        id: 'settings',
+        label: 'Cài đặt',
+        icon: 'assets/icons/solid/cog-6-tooth.svg',
+        enabled: true,
+      ),
+      QuickAction(
+        id: 'manage',
+        label: 'Quản lý lối tắt',
+        icon: 'assets/icons/solid/squares-2x2.svg',
+        enabled: true,
+      ),
     ];
   }
 }

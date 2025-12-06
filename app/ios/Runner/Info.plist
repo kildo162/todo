@@ -41,6 +41,12 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Allow local network access to discover nearby devices and services.</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_udp</string>
+	</array>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>

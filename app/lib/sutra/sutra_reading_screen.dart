@@ -15,8 +15,9 @@ class SutraReadingScreen extends StatefulWidget {
 }
 
 class _SutraReadingScreenState extends State<SutraReadingScreen> {
-  final SutraController controller =
-      Get.isRegistered<SutraController>() ? Get.find<SutraController>() : Get.put(SutraController(), permanent: true);
+  final SutraController controller = Get.isRegistered<SutraController>()
+      ? Get.find<SutraController>()
+      : Get.put(SutraController(), permanent: true);
   double fontSize = 16;
 
   @override
@@ -33,12 +34,14 @@ class _SutraReadingScreenState extends State<SutraReadingScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.text_increase),
-            onPressed: () => setState(() => fontSize = (fontSize + 1).clamp(14, 26)),
+            onPressed: () =>
+                setState(() => fontSize = (fontSize + 1).clamp(14, 26)),
             tooltip: 'Tăng cỡ chữ',
           ),
           IconButton(
             icon: const Icon(Icons.text_decrease),
-            onPressed: () => setState(() => fontSize = (fontSize - 1).clamp(14, 26)),
+            onPressed: () =>
+                setState(() => fontSize = (fontSize - 1).clamp(14, 26)),
             tooltip: 'Giảm cỡ chữ',
           ),
         ],
@@ -62,21 +65,32 @@ class _SutraReadingScreenState extends State<SutraReadingScreen> {
                   Expanded(
                     child: Text(
                       'Chế độ đọc • ${item.category.label}',
-                      style: TextStyle(color: color, fontWeight: FontWeight.w700),
+                      style: TextStyle(
+                        color: color,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ),
                   ElevatedButton.icon(
                     onPressed: () async {
                       await controller.logReading(item.id);
-                      ToastUtils.showToast('Đã ghi nhận một lần đọc', backgroundColor: color);
+                      ToastUtils.showToast(
+                        'Đã ghi nhận một lần đọc',
+                        backgroundColor: color,
+                      );
                     },
                     icon: const Icon(Icons.check),
                     label: const Text('Đánh dấu đã đọc'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: color,
                       elevation: 0,
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 10,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                   ),
                 ],
@@ -90,17 +104,28 @@ class _SutraReadingScreenState extends State<SutraReadingScreen> {
                   children: [
                     Text(
                       item.title,
-                      style: TextStyle(fontSize: fontSize + 4, fontWeight: FontWeight.w800, color: color),
+                      style: TextStyle(
+                        fontSize: fontSize + 4,
+                        fontWeight: FontWeight.w800,
+                        color: color,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       item.description,
-                      style: TextStyle(fontSize: fontSize - 1, color: Colors.grey.shade700),
+                      style: TextStyle(
+                        fontSize: fontSize - 1,
+                        color: Colors.grey.shade700,
+                      ),
                     ),
                     const SizedBox(height: 14),
                     Text(
                       item.content,
-                      style: TextStyle(fontSize: fontSize, height: 1.6, color: Colors.grey.shade900),
+                      style: TextStyle(
+                        fontSize: fontSize,
+                        height: 1.6,
+                        color: Colors.grey.shade900,
+                      ),
                     ),
                     const SizedBox(height: 24),
                     if (item.durationMinutes != null)
@@ -114,17 +139,25 @@ class _SutraReadingScreenState extends State<SutraReadingScreen> {
                         spacing: 8,
                         runSpacing: 6,
                         children: item.tags
-                            .map((tag) => Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                                  decoration: BoxDecoration(
-                                    color: color.withOpacity(0.12),
-                                    borderRadius: BorderRadius.circular(12),
+                            .map(
+                              (tag) => Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 6,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: color.withOpacity(0.12),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Text(
+                                  tag,
+                                  style: TextStyle(
+                                    color: color,
+                                    fontWeight: FontWeight.w600,
                                   ),
-                                  child: Text(
-                                    tag,
-                                    style: TextStyle(color: color, fontWeight: FontWeight.w600),
-                                  ),
-                                ))
+                                ),
+                              ),
+                            )
                             .toList(),
                       ),
                     ],

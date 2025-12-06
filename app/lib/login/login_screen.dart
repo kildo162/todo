@@ -30,10 +30,7 @@ class LoginScreen extends StatelessWidget {
                 SizedBox(height: 8),
                 Text(
                   'Sign in to continue',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey[700],
-                  ),
+                  style: TextStyle(fontSize: 16, color: Colors.grey[700]),
                 ),
                 SizedBox(height: 32),
                 TextField(
@@ -47,7 +44,10 @@ class LoginScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10),
                       borderSide: BorderSide.none,
                     ),
-                    contentPadding: EdgeInsets.symmetric(vertical: 18, horizontal: 16),
+                    contentPadding: EdgeInsets.symmetric(
+                      vertical: 18,
+                      horizontal: 16,
+                    ),
                   ),
                 ),
                 SizedBox(height: 16),
@@ -62,7 +62,10 @@ class LoginScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10),
                       borderSide: BorderSide.none,
                     ),
-                    contentPadding: EdgeInsets.symmetric(vertical: 18, horizontal: 16),
+                    contentPadding: EdgeInsets.symmetric(
+                      vertical: 18,
+                      horizontal: 16,
+                    ),
                   ),
                   obscureText: true,
                 ),
@@ -85,11 +88,17 @@ class LoginScreen extends StatelessWidget {
                           ? SizedBox(
                               width: 22,
                               height: 22,
-                              child: const CircularProgressIndicator(strokeWidth: 2.4, color: Colors.white),
+                              child: const CircularProgressIndicator(
+                                strokeWidth: 2.4,
+                                color: Colors.white,
+                              ),
                             )
                           : Text(
                               'Login',
-                              style: TextStyle(fontSize: 18, color: Colors.white),
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.white,
+                              ),
                             ),
                     ),
                   );
@@ -102,11 +111,17 @@ class LoginScreen extends StatelessWidget {
                   children: [
                     TextButton(
                       onPressed: () => Get.to(() => ForgotPasswordScreen()),
-                      child: Text('Forgot Password?', style: TextStyle(color: Colors.blue)),
+                      child: Text(
+                        'Forgot Password?',
+                        style: TextStyle(color: Colors.blue),
+                      ),
                     ),
                     TextButton(
                       onPressed: () => Get.to(() => SignUpScreen()),
-                      child: Text("Don't have an account? Sign Up", style: TextStyle(color: Colors.blue)),
+                      child: Text(
+                        "Don't have an account? Sign Up",
+                        style: TextStyle(color: Colors.blue),
+                      ),
                     ),
                   ],
                 ),

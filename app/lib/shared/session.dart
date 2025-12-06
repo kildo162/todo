@@ -96,6 +96,7 @@ class SessionController extends GetxController {
 
   final isAuthenticated = false.obs;
   final user = Rxn<SessionUser>();
+  final authToken = Rxn<String>();
   final settings = const SessionSettings().obs;
 
   @override
@@ -106,9 +107,11 @@ class SessionController extends GetxController {
 
   Future<void> signIn({
     required SessionUser newUser,
+    String? token,
     SessionSettings? newSettings,
   }) async {
     user.value = newUser;
+    if (token != null) authToken.value = token;
     if (newSettings != null) {
       settings.value = newSettings;
     }
@@ -119,6 +122,7 @@ class SessionController extends GetxController {
   Future<void> signOut() async {
     isAuthenticated.value = false;
     user.value = null;
+    authToken.value = null;
     await _save();
   }
 
@@ -156,6 +160,9 @@ class SessionController extends GetxController {
           decoded['user'] as Map<String, dynamic>,
         );
       }
+      if (decoded['token'] != null) {
+        authToken.value = decoded['token'] as String;
+      }
       if (decoded['settings'] != null) {
         settings.value = SessionSettings.fromJson(
           decoded['settings'] as Map<String, dynamic>,
@@ -171,6 +178,7 @@ class SessionController extends GetxController {
     final data = {
       'authenticated': isAuthenticated.value,
       'user': user.value?.toJson(),
+      'token': authToken.value,
       'settings': settings.value.toJson(),
     };
     await prefs.setString(_storageKey, jsonEncode(data));

@@ -5,6 +5,8 @@ import 'package:app/shared/session.dart';
 import 'package:app/home/profile/personal_info_screen.dart';
 import 'package:app/home/profile/language_screen.dart';
 import 'profile_controller.dart';
+import 'package:app/services/api_config.dart';
+import 'package:app/services/discovery_service.dart';
 
 class ProfileTabScreen extends StatefulWidget {
   const ProfileTabScreen({super.key});
@@ -48,6 +50,24 @@ class _ProfileTabScreenState extends State<ProfileTabScreen> {
                 shape: BoxShape.circle,
               ),
               child: const Icon(Icons.person, color: Colors.white),
+            ),
+            const SizedBox(height: 12),
+            // Show current API base URL & a button to re-run discovery
+            Card(
+              child: ListTile(
+                title: const Text('API Endpoint'),
+                subtitle: Text(ApiConfig.getBaseUrl()),
+                trailing: IconButton(
+                  icon: const Icon(Icons.wifi),
+                  onPressed: () async {
+                    final newBase = await DiscoveryService.discoverOrFallback();
+                    setState(() {}); // refresh to show the new URL
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Selected API base: $newBase')),
+                    );
+                  },
+                ),
+              ),
             ),
             const SizedBox(width: 12),
             Column(
@@ -265,7 +285,9 @@ class _ProfileTabScreenState extends State<ProfileTabScreen> {
                   return _ShortcutTile(
                     icon: Icons.language,
                     title: 'Ngôn ngữ',
-                    subtitle: controller.languageLabel(controller.settings.languageCode),
+                    subtitle: controller.languageLabel(
+                      controller.settings.languageCode,
+                    ),
                     onTap: () => Get.to(() => LanguageScreen()),
                   );
                 }),

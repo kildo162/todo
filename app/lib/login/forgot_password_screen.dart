@@ -25,7 +25,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     setState(() => _isSubmitting = true);
 
     await Future.delayed(const Duration(milliseconds: 900)); // Mock request
-    ToastUtils.showToast('Đã gửi hướng dẫn đặt lại mật khẩu (mock)', backgroundColor: Colors.blue);
+    ToastUtils.showToast(
+      'Đã gửi hướng dẫn đặt lại mật khẩu (mock)',
+      backgroundColor: Colors.blue,
+    );
     setState(() => _isSubmitting = false);
   }
 
@@ -37,7 +40,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         backgroundColor: Colors.white,
         elevation: 0.5,
         iconTheme: const IconThemeData(color: Colors.black),
-        titleTextStyle: const TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.w700),
+        titleTextStyle: const TextStyle(
+          color: Colors.black,
+          fontSize: 18,
+          fontWeight: FontWeight.w700,
+        ),
       ),
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
@@ -48,7 +55,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 12),
-              const Text('Nhập email để nhận liên kết đặt lại mật khẩu.', style: TextStyle(fontSize: 15)),
+              const Text(
+                'Nhập email để nhận liên kết đặt lại mật khẩu.',
+                style: TextStyle(fontSize: 15),
+              ),
               const SizedBox(height: 20),
               TextFormField(
                 controller: _emailCtrl,
@@ -72,15 +82,26 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   onPressed: _isSubmitting ? null : _submit,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                   child: _isSubmitting
                       ? const SizedBox(
                           width: 20,
                           height: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
                         )
-                      : const Text('Gửi liên kết', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700)),
+                      : const Text(
+                          'Gửi liên kết',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
                 ),
               ),
               const SizedBox(height: 12),
